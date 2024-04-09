@@ -25,12 +25,12 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RedisDao redisDao;
 
-    public void signOut(String userId, String accessToken) {
-        redisDao.deleteRefreshToken(userId);
+    public void signOut(Long userId, String accessToken) {
+        redisDao.deleteRefreshToken(userId.toString());
         redisDao.setAccessTokenSignOut(accessToken);
     }
 
-    public Long SignUpProcess(SignUpDTO signUpDTO) {
+    public Long signUp(SignUpDTO signUpDTO) {
 
         String userEmail = signUpDTO.userEmail();
         String password = signUpDTO.password();
@@ -59,7 +59,7 @@ public class AuthService {
         return userRepository.findByUserEmail(userEmail).getId();
     }
 
-    public TokenResponse SignInProcess(UserDTO userDTO) {
+    public TokenResponse signIn(UserDTO userDTO) {
 
         String userEmail = userDTO.userEmail();
         String password = userDTO.password();
