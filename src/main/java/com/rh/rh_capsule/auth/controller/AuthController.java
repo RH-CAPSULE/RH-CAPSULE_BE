@@ -5,6 +5,7 @@ import com.rh.rh_capsule.auth.dto.TokenResponse;
 import com.rh.rh_capsule.auth.dto.UserDTO;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.service.AuthService;
+import com.rh.rh_capsule.auth.support.AuthUser;
 import com.rh.rh_capsule.auth.support.AuthenticationContext;
 import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ public class AuthController {
     private final AuthService authService;
     private final JwtProvider jwtProvider;
     private final AuthenticationContext authenticationContext;
+
     @PostMapping("/api/auth/signup")
     public ResponseEntity<String> signUpProcess(@RequestBody SignUpDTO signUpDTO) {
         Long id = authService.signUp(signUpDTO);
@@ -39,21 +41,8 @@ public class AuthController {
     }
 
     @PostMapping("/api/signout")
-    public ResponseEntity<?> signOut(HttpServletRequest request) {
-        Long userId = authenticationContext.getAuthentication();
+    public ResponseEntity<?> signOut(@AuthUser Long userId, HttpServletRequest request) {
         AuthenticationExtractor.extractAccessToken(request).ifPresent(accessToken -> authService.signOut(userId, accessToken));
         return ResponseEntity.ok().body("로그이웃 되었습니다.");
     }
-
-//    @PostMapping("/api/auth/mail/send")
-//    public ResponseEntity<?> sendVerificationEmail(String userEmail) {
-//        mailVerificationService.sendVerificationEmail(userEmail);
-//        return ResponseEntity.ok().body(userEmail + "로 인증번호가 전송 되었습니다.");
-//    }
-//
-//    @PostMapping("/api/auth/mail/verify")
-//    public ResponseEntity<?> verifyEmail(String userEmail, String code) {
-//        mailVerificationService.verifyCode(userEmail, code);
-//        return ResponseEntity.ok().body("이메일 인증이 완료되었습니다");
-//    }
 }
