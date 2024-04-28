@@ -27,7 +27,7 @@ public class AuthController {
     private final AuthenticationContext authenticationContext;
 
     @PostMapping("/api/auth/signup")
-    public ResponseEntity<String> signUpProcess(@RequestBody SignUpDTO signUpDTO) {
+    public ResponseEntity<String> signUp(@RequestBody SignUpDTO signUpDTO) {
         Long id = authService.signUp(signUpDTO);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/api/users/{id}")
@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/signin")
-    public ResponseEntity<TokenResponse> signInProcess(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<TokenResponse> signIn(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(authService.signIn(userDTO));
     }
 
@@ -44,5 +44,11 @@ public class AuthController {
     public ResponseEntity<?> signOut(@AuthUser Long userId, HttpServletRequest request) {
         AuthenticationExtractor.extractAccessToken(request).ifPresent(accessToken -> authService.signOut(userId, accessToken));
         return ResponseEntity.ok().body("로그이웃 되었습니다.");
+    }
+
+    @PostMapping("/api/auth/reset-pw")
+    public ResponseEntity<String> resetPassword(@RequestBody SignUpDTO signUpDTO) {
+        authService.resetPassword(signUpDTO);
+        return ResponseEntity.ok().body("비밀번호가 재설정되었습니다.");
     }
 }

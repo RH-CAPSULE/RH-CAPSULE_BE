@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.service;
 
+import com.rh.rh_capsule.auth.dto.SendMailDTO;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.ErrorCode;
 import com.rh.rh_capsule.redis.RedisDao;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 import java.util.UUID;
 
+import static com.rh.rh_capsule.auth.dto.VerificationPurpose.SIGN_UP;
+
 @Service
 @RequiredArgsConstructor
 public class MailVerificationService {
@@ -21,9 +24,20 @@ public class MailVerificationService {
     private final JavaMailSender javaMailSender;
     private final RedisDao redisDao;
 
-    public void sendVerificationEmail(String userEmail) {
-        if (userRepository.existsByUserEmail(userEmail)) {
-            throw new AuthException(ErrorCode.EMAIL_ALREADY_EXISTS);
+    public void sendVerificationEmail(SendMailDTO sendMailDTO) {
+        String userEmail = sendMailDTO.userEmail();
+        String purpose = sendMailDTO.purpose();
+        switch (purpose){
+            case "SIGN_UP":
+                if (userRepository.existsByUserEmail(userEmail)) {
+                    throw new AuthException(ErrorCode.EMAIL_ALREADY_EXISTS);
+                }
+                break;
+            case "RESET_PASSWORD":
+                if (!userRepository.existsByUserEmail(userEmail)) {
+                    throw new AuthException(ErrorCode.EMAIL_NOT_FOUND);
+                }
+                break;
         }
 
         String verificationCode = generateVerificationCode();
