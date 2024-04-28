@@ -72,4 +72,21 @@ public class AuthService {
 
         throw new AuthException(ErrorCode.UNAUTHORIZED);
     }
+
+    public void resetPassword(SignUpDTO signUpDTO) {
+        String userEmail = signUpDTO.userEmail();
+        String password = signUpDTO.password();
+        String uuid = signUpDTO.uuid();
+
+        //이 부분 널처리 해야함
+        if(!uuid.equals(redisDao.getVerificationUuid(userEmail))){
+            throw new AuthException(ErrorCode.INVALID_VERIFICATION_UUID);
+        }
+
+        User user = userRepository.findByUserEmail(userEmail);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+
+        redisDao.deleteRefreshToken(user.getId().toString());
+    }
 }
