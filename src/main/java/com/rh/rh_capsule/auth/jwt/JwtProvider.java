@@ -30,7 +30,8 @@ public class JwtProvider {
     private final RedisDao redisDao;
 
     private static final Long ONE_DAY = 60 * 60 * 24L;
-    private static final Long ACCESS_TOKEN_EXPIRATION_TIME = ONE_DAY * 1L;
+    private static final Long ONE_HOUR = 60 * 60L;
+    private static final Long ACCESS_TOKEN_EXPIRATION_TIME = ONE_HOUR * 1L;
     private static final Long REFRESH_TOKEN_EXPIRATION_TIME = ONE_DAY * 7L;
 
     @PostConstruct

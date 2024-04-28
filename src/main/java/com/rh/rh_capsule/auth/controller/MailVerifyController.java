@@ -18,7 +18,7 @@ public class MailVerifyController {
 
     @PostMapping("/api/auth/mail/send")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody SendMailDTO sendMailDTO) {
-        mailVerificationService.sendVerificationEmail(sendMailDTO.userEmail());
+        mailVerificationService.sendVerificationEmail(sendMailDTO);
         return ResponseEntity.ok().body(sendMailDTO.userEmail() + "로 인증번호가 전송 되었습니다.");
     }
 
