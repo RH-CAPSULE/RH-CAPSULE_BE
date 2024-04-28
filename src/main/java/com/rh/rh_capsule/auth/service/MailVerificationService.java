@@ -50,15 +50,12 @@ public class MailVerificationService {
         redisDao.setVerificationCode(userEmail, verificationCode, 3L);
     }
 
-    public String verifyCode(String userEmail, String code) {
+    public void verifyCode(String userEmail, String code) {
         String verificationCode = redisDao.getVerificationCode(userEmail);
         if(!code.equals(verificationCode)){
             throw new AuthException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
-        redisDao.deleteVerificationCode(userEmail);
-        String uuid = UUID.randomUUID().toString();
-        redisDao.setVerificationUuid(userEmail, uuid, 3L);
-        return uuid;
+        redisDao.setVerification(userEmail, 3L);
     }
 
 

@@ -34,19 +34,16 @@ public class AuthService {
 
         String userEmail = signUpDTO.userEmail();
         String password = signUpDTO.password();
-        String uuid = signUpDTO.uuid();
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
         if (isExist) {
             throw new AuthException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        //이 부분 널처리 해야함
-        System.out.println("uuid : " + uuid);
-        System.out.println("redis uuid : " + redisDao.getVerificationUuid(userEmail));
-        if(!uuid.equals(redisDao.getVerificationUuid(userEmail))){
-            throw new AuthException(ErrorCode.INVALID_VERIFICATION_UUID);
+        if(!(redisDao.getVerification(userEmail) == "Verified")){
+            throw new AuthException(ErrorCode.INVALID_VERIFICATION);
         }
+        redisDao.deleteVerification(userEmail);
 
         //이메인 인증 구현
         User data = new User();
@@ -76,12 +73,12 @@ public class AuthService {
     public void resetPassword(SignUpDTO signUpDTO) {
         String userEmail = signUpDTO.userEmail();
         String password = signUpDTO.password();
-        String uuid = signUpDTO.uuid();
 
         //이 부분 널처리 해야함
-        if(!uuid.equals(redisDao.getVerificationUuid(userEmail))){
-            throw new AuthException(ErrorCode.INVALID_VERIFICATION_UUID);
+        if(!(redisDao.getVerification(userEmail) == "Verified")){
+            throw new AuthException(ErrorCode.INVALID_VERIFICATION);
         }
+        redisDao.deleteVerification(userEmail);
 
         User user = userRepository.findByUserEmail(userEmail);
         user.setPassword(bCryptPasswordEncoder.encode(password));
