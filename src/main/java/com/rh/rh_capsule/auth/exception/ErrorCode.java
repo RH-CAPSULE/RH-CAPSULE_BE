@@ -17,7 +17,7 @@ public enum ErrorCode {
     INVALID_TOKEN_FORMAT(401, 1011,"토큰의 형식이 유효하지 않습니다."),
     SECURITY_ERROR(401, 1012, "토큰 처리 중 보안 오류가 발생했습니다."),
     JWT_ERROR(401, 1013, "토큰 관련 오류가 발생했습니다."),
-    INVALID_VERIFICATION_UUID(401, 1014, "인증 UUID가 유효하지 않습니다."),
+    INVALID_VERIFICATION(401, 1014, "이메일 인증이 완료되지 않았습니다."),
     EMAIL_NOT_FOUND(404, 1015, "이메일이 존재하지 않습니다."),;
 
     private final int statusCode;

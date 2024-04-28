@@ -49,20 +49,20 @@ public class RedisDao {
         return redisTemplate.opsForValue().get(mail);
     }
 
-    public void setVerificationUuid(String uuid, String userEmail, Long uuidTime) {
+    public void setVerification(String userEmail, Long uuidTime) {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
-        redisTemplate.opsForValue().set(uuid, userEmail, uuidTime, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(userEmail,"Verified", uuidTime, TimeUnit.MINUTES);
     }
 
-    public String getVerificationUuid(String mail) {
+    public String getVerification(String mail) {
         return redisTemplate.opsForValue().get(mail);
+    }
+
+    public void deleteVerification(String userEmail) {
+        redisTemplate.delete(userEmail);
     }
 
     public void flushAll(){
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
-    }
-
-    public void deleteVerificationCode(String userEmail) {
-        redisTemplate.delete(userEmail);
     }
 }

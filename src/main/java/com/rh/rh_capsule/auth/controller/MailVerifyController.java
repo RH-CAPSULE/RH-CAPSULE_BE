@@ -2,7 +2,6 @@ package com.rh.rh_capsule.auth.controller;
 
 import com.rh.rh_capsule.auth.dto.SendMailDTO;
 import com.rh.rh_capsule.auth.dto.VerifyMailDTO;
-import com.rh.rh_capsule.auth.dto.VerifyResponseDTO;
 import com.rh.rh_capsule.auth.service.MailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +22,8 @@ public class MailVerifyController {
     }
 
     @PostMapping("/api/auth/mail/verify")
-    public ResponseEntity<VerifyResponseDTO> verifyEmail(@RequestBody VerifyMailDTO verifyMailDTO) {
-        String uuid = mailVerificationService.verifyCode(verifyMailDTO.userEmail(), verifyMailDTO.code());
-        VerifyResponseDTO verifyResponseDTO = new VerifyResponseDTO(uuid);
-        return ResponseEntity.ok(verifyResponseDTO);
+    public ResponseEntity<?> verifyEmail(@RequestBody VerifyMailDTO verifyMailDTO) {
+        mailVerificationService.verifyCode(verifyMailDTO.userEmail(), verifyMailDTO.code());
+        return ResponseEntity.ok().body("인증이 완료되었습니다.");
     }
 }
