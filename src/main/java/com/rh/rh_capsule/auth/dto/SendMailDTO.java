@@ -1,6 +1,7 @@
 package com.rh.rh_capsule.auth.dto;
 
 public record SendMailDTO(
-        String userEmail
+        String userEmail,
+        String purpose
 ) {
 }
