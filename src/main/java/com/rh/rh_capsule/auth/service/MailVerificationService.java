@@ -1,6 +1,7 @@
 package com.rh.rh_capsule.auth.service;
 
 import com.rh.rh_capsule.auth.dto.SendMailDTO;
+import com.rh.rh_capsule.auth.dto.VerificationPurpose;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.ErrorCode;
 import com.rh.rh_capsule.redis.RedisDao;
@@ -26,14 +27,14 @@ public class MailVerificationService {
 
     public void sendVerificationEmail(SendMailDTO sendMailDTO) {
         String userEmail = sendMailDTO.userEmail();
-        String purpose = sendMailDTO.purpose();
+        VerificationPurpose purpose = sendMailDTO.purpose();
         switch (purpose){
-            case "SIGN_UP":
+            case SIGN_UP:
                 if (userRepository.existsByUserEmail(userEmail)) {
                     throw new AuthException(ErrorCode.EMAIL_ALREADY_EXISTS);
                 }
                 break;
-            case "RESET_PASSWORD":
+            case RESET_PASSWORD:
                 if (!userRepository.existsByUserEmail(userEmail)) {
                     throw new AuthException(ErrorCode.EMAIL_NOT_FOUND);
                 }
