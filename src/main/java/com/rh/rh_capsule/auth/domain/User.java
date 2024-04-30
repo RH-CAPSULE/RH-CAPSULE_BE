@@ -1,4 +1,4 @@
-package com.rh.rh_capsule.domain;
+package com.rh.rh_capsule.auth.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

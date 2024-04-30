@@ -1,8 +1,8 @@
 package com.rh.rh_capsule.auth.controller;
 
-import com.rh.rh_capsule.auth.dto.SignUpDTO;
-import com.rh.rh_capsule.auth.dto.TokenResponse;
-import com.rh.rh_capsule.auth.dto.UserDTO;
+import com.rh.rh_capsule.auth.controller.dto.UserDTO;
+import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
+import com.rh.rh_capsule.auth.controller.dto.UserDTO;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.service.AuthService;
 import com.rh.rh_capsule.auth.support.AuthUser;
@@ -27,8 +27,8 @@ public class AuthController {
     private final AuthenticationContext authenticationContext;
 
     @PostMapping("/api/auth/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignUpDTO signUpDTO) {
-        Long id = authService.signUp(signUpDTO);
+    public ResponseEntity<String> signUp(@RequestBody UserDTO userDTO) {
+        Long id = authService.signUp(userDTO);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/api/users/{id}")
                 .buildAndExpand(id).toUri();
@@ -47,8 +47,8 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/reset-pw")
-    public ResponseEntity<String> resetPassword(@RequestBody SignUpDTO signUpDTO) {
-        authService.resetPassword(signUpDTO);
+    public ResponseEntity<String> resetPassword(@RequestBody UserDTO userDTO) {
+        authService.resetPassword(userDTO);
         return ResponseEntity.ok().body("비밀번호가 재설정되었습니다.");
     }
 }
