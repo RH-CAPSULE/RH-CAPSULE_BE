@@ -1,21 +1,17 @@
 package com.rh.rh_capsule.auth.service;
 
-import com.rh.rh_capsule.auth.dto.SendMailDTO;
-import com.rh.rh_capsule.auth.dto.VerificationPurpose;
+import com.rh.rh_capsule.auth.controller.dto.SendMailDTO;
+import com.rh.rh_capsule.auth.controller.dto.VerificationPurpose;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.ErrorCode;
 import com.rh.rh_capsule.redis.RedisDao;
 import com.rh.rh_capsule.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
-import java.util.UUID;
-
-import static com.rh.rh_capsule.auth.dto.VerificationPurpose.SIGN_UP;
 
 @Service
 @RequiredArgsConstructor
