@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.controller;
 
-import com.rh.rh_capsule.auth.dto.SendMailDTO;
-import com.rh.rh_capsule.auth.dto.VerifyMailDTO;
+import com.rh.rh_capsule.auth.controller.dto.SendMailDTO;
+import com.rh.rh_capsule.auth.controller.dto.VerifyMailDTO;
 import com.rh.rh_capsule.auth.service.MailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

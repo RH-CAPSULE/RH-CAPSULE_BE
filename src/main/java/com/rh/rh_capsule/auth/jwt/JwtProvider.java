@@ -1,6 +1,6 @@
 package com.rh.rh_capsule.auth.jwt;
 
-import com.rh.rh_capsule.auth.dto.TokenResponse;
+import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.ErrorCode;
 import com.rh.rh_capsule.redis.RedisDao;

@@ -1,13 +1,12 @@
 package com.rh.rh_capsule.auth.service;
 
-import com.rh.rh_capsule.auth.dto.SignUpDTO;
-import com.rh.rh_capsule.auth.dto.TokenResponse;
-import com.rh.rh_capsule.auth.dto.UserDTO;
+import com.rh.rh_capsule.auth.controller.dto.UserDTO;
+import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.ErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
-import com.rh.rh_capsule.domain.User;
-import com.rh.rh_capsule.domain.UserAuthority;
+import com.rh.rh_capsule.auth.domain.User;
+import com.rh.rh_capsule.auth.domain.UserAuthority;
 import com.rh.rh_capsule.redis.RedisDao;
 import com.rh.rh_capsule.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +29,10 @@ public class AuthService {
         redisDao.setAccessTokenSignOut(accessToken);
     }
 
-    public Long signUp(SignUpDTO signUpDTO) {
+    public Long signUp(UserDTO userDTO) {
 
-        String userEmail = signUpDTO.userEmail();
-        String password = signUpDTO.password();
+        String userEmail = userDTO.userEmail();
+        String password = userDTO.password();
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
         if (isExist) {
@@ -70,9 +69,9 @@ public class AuthService {
         throw new AuthException(ErrorCode.UNAUTHORIZED);
     }
 
-    public void resetPassword(SignUpDTO signUpDTO) {
-        String userEmail = signUpDTO.userEmail();
-        String password = signUpDTO.password();
+    public void resetPassword(UserDTO userDTO) {
+        String userEmail = userDTO.userEmail();
+        String password = userDTO.password();
 
         //이 부분 널처리 해야함
         if(!(redisDao.getVerification(userEmail) == "Verified")){
