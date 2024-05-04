@@ -35,15 +35,15 @@ public class AuthConfig implements WebMvcConfigurer {
         registry.addInterceptor(tokenExistenceInterceptor)
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html");
+                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/files/**");
         registry.addInterceptor(tokenBlackListInterceptor)
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html");
+                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/files/**");
         registry.addInterceptor(loginInterceptor)
                 .order(3)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html");
+                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/files/**");
 
     }
 

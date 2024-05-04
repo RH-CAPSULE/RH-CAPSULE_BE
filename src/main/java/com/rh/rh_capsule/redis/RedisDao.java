@@ -1,8 +1,6 @@
 package com.rh.rh_capsule.redis;
 
 
-import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;

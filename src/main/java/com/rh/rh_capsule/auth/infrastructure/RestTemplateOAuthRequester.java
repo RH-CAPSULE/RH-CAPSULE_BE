@@ -3,7 +3,7 @@ package com.rh.rh_capsule.auth.infrastructure;
 import com.rh.rh_capsule.auth.domain.OAuthUser;
 import com.rh.rh_capsule.auth.domain.Provider;
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.infrastructure.dto.OAuthTokenResponse;
 import com.rh.rh_capsule.auth.service.OAuthProviderProperties;
 import com.rh.rh_capsule.auth.service.OAuthRequester;
@@ -85,7 +85,7 @@ public class RestTemplateOAuthRequester implements OAuthRequester{
         try {
             return restTemplate.postForEntity(tokenUri, request, OAuthTokenResponse.class).getBody();
         } catch (Exception e) {
-            throw new AuthException(ErrorCode.OAUTH_ERROR);
+            throw new AuthException(AuthErrorCode.OAUTH_ERROR);
         }
     }
 
@@ -109,7 +109,7 @@ public class RestTemplateOAuthRequester implements OAuthRequester{
             });
             return responseEntity.getBody();
         } catch (Exception e) {
-            throw new AuthException(ErrorCode.OAUTH_ERROR);
+            throw new AuthException(AuthErrorCode.OAUTH_ERROR);
         }
     }
 }

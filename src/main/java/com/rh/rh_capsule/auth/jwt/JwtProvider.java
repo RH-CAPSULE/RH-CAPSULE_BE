@@ -2,7 +2,7 @@ package com.rh.rh_capsule.auth.jwt;
 
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.redis.RedisDao;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -102,20 +102,20 @@ public class JwtProvider {
                     .getBody();
             return claims.get("id", Long.class);
         } catch (ExpiredJwtException e) {
-            throw new AuthException(ErrorCode.EXPIRED_TOKEN);
+            throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
         } catch (SecurityException e) {
-            throw new AuthException(ErrorCode.SECURITY_ERROR);
+            throw new AuthException(AuthErrorCode.SECURITY_ERROR);
         } catch (MalformedJwtException e) {
-            throw new AuthException(ErrorCode.MALFORMED_TOKEN);
+            throw new AuthException(AuthErrorCode.MALFORMED_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new AuthException(ErrorCode.UNSUPPORTED_TOKEN);
+            throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN);
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
         } catch (SignatureException e) {
-            throw new AuthException(ErrorCode.INVALID_TOKEN_FORMAT);
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN_FORMAT);
         } catch (JwtException e){
             //위애서 안걸린 jwt 기타 익셉션
-            throw new AuthException(ErrorCode.JWT_ERROR);
+            throw new AuthException(AuthErrorCode.JWT_ERROR);
         }
     }
 

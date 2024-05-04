@@ -7,7 +7,7 @@ import com.rh.rh_capsule.auth.domain.User;
 import com.rh.rh_capsule.auth.domain.UserAuthority;
 import com.rh.rh_capsule.auth.infrastructure.RestTemplateOAuthRequester;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
-import com.rh.rh_capsule.repository.UserRepository;
+import com.rh.rh_capsule.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

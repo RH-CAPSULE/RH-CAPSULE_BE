@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class AuthException extends RuntimeException {
-    private final ErrorCode errorCode;
+    private final AuthErrorCode authErrorCode;
 
-    public AuthException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+    public AuthException(AuthErrorCode authErrorCode) {
+        super(authErrorCode.getMessage());
+        this.authErrorCode = authErrorCode;
     }
 }
