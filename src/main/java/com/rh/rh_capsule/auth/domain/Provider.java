@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.domain;
 
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -23,7 +23,7 @@ public enum Provider {
         return Arrays.stream(values())
                 .filter(it -> it.providerName.equals(name))
                 .findFirst()
-                .orElseThrow(() -> new AuthException(ErrorCode.UNAUTHORIZED));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.UNAUTHORIZED));
         //에러 코드 변경 할 것
     }
 
