@@ -3,12 +3,12 @@ package com.rh.rh_capsule.auth.service;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.domain.User;
 import com.rh.rh_capsule.auth.domain.UserAuthority;
 import com.rh.rh_capsule.redis.RedisDao;
-import com.rh.rh_capsule.repository.UserRepository;
+import com.rh.rh_capsule.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,11 +36,11 @@ public class AuthService {
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
         if (isExist) {
-            throw new AuthException(ErrorCode.EMAIL_ALREADY_EXISTS);
+            throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        if(!(redisDao.getVerification(userEmail) == "Verified")){
-            throw new AuthException(ErrorCode.INVALID_VERIFICATION);
+        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
+            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
         }
         redisDao.deleteVerification(userEmail);
 
@@ -66,7 +66,7 @@ public class AuthService {
             return jwtProvider.createTokens(user.get().getId());
         }
 
-        throw new AuthException(ErrorCode.UNAUTHORIZED);
+        throw new AuthException(AuthErrorCode.UNAUTHORIZED);
     }
 
     public void resetPassword(UserDTO userDTO) {
@@ -75,7 +75,7 @@ public class AuthService {
 
         //이 부분 널처리 해야함
         if(!(redisDao.getVerification(userEmail) == "Verified")){
-            throw new AuthException(ErrorCode.INVALID_VERIFICATION);
+            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
         }
         redisDao.deleteVerification(userEmail);
 

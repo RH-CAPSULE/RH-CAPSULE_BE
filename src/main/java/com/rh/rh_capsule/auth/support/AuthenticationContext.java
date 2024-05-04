@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.support;
 
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -19,7 +19,7 @@ public class AuthenticationContext {
 
     public Long getAuthentication(){
         if(Objects.isNull(this.userId)){
-            throw new AuthException(ErrorCode.UNAUTHORIZED);
+            throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
         return userId;
     }
