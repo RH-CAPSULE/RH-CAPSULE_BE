@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.interceptor;
 
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.support.AuthenticationContext;
 import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
@@ -20,7 +20,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String accessToken = AuthenticationExtractor.extractAccessToken(request)
-                .orElseThrow(() -> new AuthException(ErrorCode.UNAUTHORIZED));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.UNAUTHORIZED));
 
         Long userId = jwtProvider.extractId(accessToken);
         authenticationContext.setAuthentication(userId);

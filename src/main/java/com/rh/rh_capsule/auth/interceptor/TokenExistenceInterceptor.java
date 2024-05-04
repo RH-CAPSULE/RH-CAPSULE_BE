@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.interceptor;
 
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ public class TokenExistenceInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         Optional<String> accessToken = AuthenticationExtractor.extractAccessToken(request);
         if(!accessToken.isPresent()){
-            throw new AuthException(ErrorCode.TOKEN_EMPTY);
+            throw new AuthException(AuthErrorCode.TOKEN_EMPTY);
         }
         return true;
     }

@@ -1,7 +1,7 @@
 package com.rh.rh_capsule.auth.interceptor;
 
 import com.rh.rh_capsule.auth.exception.AuthException;
-import com.rh.rh_capsule.auth.exception.ErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
 import com.rh.rh_capsule.redis.RedisDao;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class TokenBlackListInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         Optional<String> accessToken = AuthenticationExtractor.extractAccessToken(request);
         if (redisDao.isKeyOfAccessTokenInBlackList(accessToken.get())) {
-            throw new AuthException(ErrorCode.ALREADY_SIGN_OUT);
+            throw new AuthException(AuthErrorCode.ALREADY_SIGN_OUT);
         }
         return true;
     }
