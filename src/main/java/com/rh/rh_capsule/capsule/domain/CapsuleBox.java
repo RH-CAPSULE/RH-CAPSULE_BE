@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,9 @@ public class CapsuleBox {
     private LocalDateTime openedAt;
     private LocalDateTime closedAt;
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "capsuleBox", fetch = FetchType.LAZY)
+    private List<Capsule> capsules = new ArrayList<>();
 
     @Builder
     public CapsuleBox(User user, CapsuleBoxTheme theme, LocalDateTime openedAt, LocalDateTime closedAt, LocalDateTime createdAt) {
