@@ -1,8 +1,12 @@
 package com.rh.rh_capsule.auth.domain;
 
+import com.rh.rh_capsule.capsule.domain.CapsuleBox;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name="users")
 @Getter
@@ -19,6 +23,9 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CapsuleBox> capsuleBoxes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
