@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CapsuleBoxRepository extends JpaRepository<CapsuleBox, Long> {
-    List<CapsuleBox> findByUser(User user);
+//    List<CapsuleBox> findByUser(User user);
+    List<CapsuleBox> findByUserId(Long userId);
     Optional<CapsuleBox> findById(Long id);
+
 }
