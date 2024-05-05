@@ -38,6 +38,11 @@ public class CapsuleController {
         return ResponseEntity.ok().body(capsuleService.getHistoryCapsuleBoxes(userId, paginationDTO));
     }
 
+    @DeleteMapping("/api/capsule-box/{capsuleBoxId}")
+    public ResponseEntity<?> deleteCapsuleBox(@PathVariable Long capsuleBoxId) {
+        capsuleService.deleteCapsuleBox(capsuleBoxId);
+        return ResponseEntity.ok().body("캡슐함이 삭제되었습니다.");
+    }
     @PostMapping(value = "/api/capsule/create", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> createCapsule(
@@ -57,4 +62,15 @@ public class CapsuleController {
         capsuleService.createCapsule(capsuleCreateDTO, imageUrl, audioUrl);
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
     }
+
+    @GetMapping("/api/capsule-list/{capsuleBoxId}")
+    public ResponseEntity<List<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId, @RequestBody PaginationDTO paginationDTO) {
+        return ResponseEntity.ok().body(capsuleService.getCapsuleList(capsuleBoxId, paginationDTO));
+    }
+
+    @GetMapping("/api/capsule/{capsuleId}")
+    public ResponseEntity<CapsuleDTO> getCapsule(@PathVariable Long capsuleId) {
+        return ResponseEntity.ok().body(capsuleService.getCapsule(capsuleId));
+    }
+
 }
