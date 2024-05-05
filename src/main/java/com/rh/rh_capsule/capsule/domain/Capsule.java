@@ -41,4 +41,6 @@ public class Capsule {
         this.createdAt = createdAt;
         this.isMine = isMine;
     }
+    protected Capsule() {
+    }
 }
