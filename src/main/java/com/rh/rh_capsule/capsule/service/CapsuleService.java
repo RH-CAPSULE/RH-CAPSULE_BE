@@ -25,11 +25,6 @@ public class CapsuleService {
     private final UserRepository userRepository;
     private final EntityManager em;
     public void createCapsuleBox(CapsuleBoxCreateDTO capsuleBoxCreateDTO, Long userId) {
-//        Optional<User> user = userRepository.findById(userId);
-//        if (!user.isPresent()) {
-//            throw new CapsuleException(CapsuleErrorCode.USER_NOT_FOUND);
-//        }
-
         if(hasActiveCapsuleBox(userId)){
             throw new CapsuleException(CapsuleErrorCode.ACTIVE_CAPSULE_BOX_ALREADY_EXISTS);
         }
@@ -150,5 +145,73 @@ public class CapsuleService {
                 box.getClosedAt(),
                 box.getCreatedAt()
         )).toList();
+    }
+
+    public void deleteCapsuleBox(Long capsuleBoxId) {
+        Optional<CapsuleBox> capsuleBox = capsuleBoxRepository.findById(capsuleBoxId);
+
+        if(!capsuleBox.isPresent()){
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
+        }
+
+        try{
+            capsuleBoxRepository.delete(capsuleBox.get());
+        }catch (Exception e){
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_DELETE_FAILED);
+        }
+    }
+
+    public List<CapsuleListDTO> getCapsuleList(Long capsuleBoxId, PaginationDTO paginationDTO) {
+        Optional<CapsuleBox> capsuleBox = capsuleBoxRepository.findById(capsuleBoxId);
+
+        if(!capsuleBox.isPresent()){
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
+        }
+
+        List<Capsule> capsules = capsuleBox.get().getCapsules();
+        if(capsules.size() == 1){
+            return List.of(new CapsuleListDTO(
+                    capsules.get(0).getId(),
+                    capsules.get(0).getColor(),
+                    capsules.get(0).getWriter(),
+                    capsules.get(0).getIsMine(),
+                    capsules.get(0).getCreatedAt()
+            ));
+        }
+
+        capsules.sort((capsule1, capsule2) -> capsule2.getCreatedAt().compareTo(capsule1.getCreatedAt()));
+
+        Long start = paginationDTO.page() * paginationDTO.size();
+        Long end = Math.min(start + paginationDTO.size(), capsules.size());
+
+        List<Capsule> pagedCapsules = capsules.subList(start.intValue(), end.intValue());
+
+        return pagedCapsules.stream().map(capsule -> new CapsuleListDTO(
+                capsule.getId(),
+                capsule.getColor(),
+                capsule.getWriter(),
+                capsule.getIsMine(),
+                capsule.getCreatedAt()
+                )).toList();
+    }
+
+    public CapsuleDTO getCapsule(Long capsuleId) {
+        Optional<Capsule> capsule = capsuleRepository.findById(capsuleId);
+
+        if(!capsule.isPresent()){
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_NOT_FOUND);
+        }
+
+        return new CapsuleDTO(
+                capsule.get().getId(),
+                capsule.get().getColor(),
+                capsule.get().getTitle(),
+                capsule.get().getContent(),
+                capsule.get().getWriter(),
+                capsule.get().getImageUrl(),
+                capsule.get().getAudioUrl(),
+                capsule.get().getIsMine(),
+                capsule.get().getCreatedAt()
+        );
     }
 }

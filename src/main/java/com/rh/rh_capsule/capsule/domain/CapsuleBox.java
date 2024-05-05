@@ -31,7 +31,7 @@ public class CapsuleBox {
     private LocalDateTime closedAt;
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "capsuleBox", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "capsuleBox", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Capsule> capsules = new ArrayList<>();
 
     @Builder
