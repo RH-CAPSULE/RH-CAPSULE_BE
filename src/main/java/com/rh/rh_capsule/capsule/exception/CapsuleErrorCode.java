@@ -12,7 +12,10 @@ public enum CapsuleErrorCode {
     ACTIVE_CAPSULE_BOX_ALREADY_EXISTS(401, 3005, "이미 활성화된 캡슐함이 존재합니다."),
     NOT_ACTIVE_CAPSULE_BOX(401, 3006, "봉인 날짜가 지난 캡슐함에는 캡슐을 넣을 수 없습니다."),
     CAPSULE_BOX_DELETE_FAILED(400, 3007, "캡슐함 삭제에 실패했습니다."),
-    CAPSULE_NOT_FOUND(404, 3008, "요청된 캡슐을 찾을 수 없습니다.");
+    CAPSULE_NOT_FOUND(404, 3008, "요청된 캡슐을 찾을 수 없습니다."),
+    IMAGE_UPLOAD_FAILED(400, 3009, "이미지 업로드에 실패했습니다."),
+    AUDIO_UPLOAD_FAILED(400, 3010, "오디오 업로드에 실패했습니다."),
+    MINE_CAPSULE_ALREADY_EXISTS(401, 3011, "이미 내 캡슐이 존재합니다."),;
 
     private final int statusCode;
     private final int exceptionCode;
