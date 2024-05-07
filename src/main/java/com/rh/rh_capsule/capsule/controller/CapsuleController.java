@@ -3,24 +3,26 @@ package com.rh.rh_capsule.capsule.controller;
 import com.rh.rh_capsule.auth.support.AuthUser;
 import com.rh.rh_capsule.capsule.dto.*;
 import com.rh.rh_capsule.capsule.service.CapsuleService;
-import com.rh.rh_capsule.capsule.service.FileStorageService;
-import io.swagger.v3.oas.annotations.Operation;
+import com.rh.rh_capsule.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class CapsuleController {
 
     private final CapsuleService capsuleService;
-    private final FileStorageService fileStorageService;
+
     @PostMapping("/api/capsule-box/create")
     public ResponseEntity<?> createCapsuleBox(@RequestBody CapsuleBoxCreateDTO capsuleBoxCreateDTO, @AuthUser Long userId) {
         capsuleService.createCapsuleBox(capsuleBoxCreateDTO, userId);
@@ -44,25 +46,20 @@ public class CapsuleController {
         return ResponseEntity.ok().body("캡슐함이 삭제되었습니다.");
     }
     @PostMapping(value = "/api/capsule/create", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
-    public ResponseEntity<?> createCapsule(
-            @RequestPart("capsule") @Schema(implementation = CapsuleCreateDTO.class)CapsuleCreateDTO capsuleCreateDTO,
-            @RequestPart(value = "image", required = false) MultipartFile image,
-            @RequestParam(value = "audio", required = false) MultipartFile audio) {
+    public ResponseEntity<?> createCapsule(@RequestPart(value = "capsule") @Schema(implementation = CapsuleCreateDTO.class) CapsuleCreateDTO capsuleCreateDTO,
+                                           @RequestPart(value = "image", required = false) MultipartFile image,
+                                           @RequestPart(value = "audio", required = false) MultipartFile audio,
+                                           HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        String token = null;
 
-        String imageUrl = null;
-        String audioUrl = null;
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            token = authorization.substring(7);
 
-        if (image != null && !image.isEmpty()) {
-            imageUrl = fileStorageService.storeFile(image, "image");
         }
-        if (audio != null && !audio.isEmpty()) {
-            audioUrl = fileStorageService.storeFile(audio, "audio");
-        }
-        capsuleService.createCapsule(capsuleCreateDTO, imageUrl, audioUrl);
+        capsuleService.createCapsule(capsuleCreateDTO, image, audio, token);
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
     }
-
     @GetMapping("/api/capsule-list/{capsuleBoxId}")
     public ResponseEntity<List<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId, @RequestBody PaginationDTO paginationDTO) {
         return ResponseEntity.ok().body(capsuleService.getCapsuleList(capsuleBoxId, paginationDTO));
@@ -72,5 +69,4 @@ public class CapsuleController {
     public ResponseEntity<CapsuleDTO> getCapsule(@PathVariable Long capsuleId) {
         return ResponseEntity.ok().body(capsuleService.getCapsule(capsuleId));
     }
-
 }
