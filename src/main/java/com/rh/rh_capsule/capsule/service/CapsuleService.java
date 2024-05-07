@@ -1,6 +1,9 @@
 package com.rh.rh_capsule.capsule.service;
 
 import com.rh.rh_capsule.auth.domain.User;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthException;
+import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.repository.UserRepository;
 import com.rh.rh_capsule.capsule.domain.Capsule;
 import com.rh.rh_capsule.capsule.domain.CapsuleBox;
@@ -9,9 +12,11 @@ import com.rh.rh_capsule.capsule.exception.CapsuleErrorCode;
 import com.rh.rh_capsule.capsule.exception.CapsuleException;
 import com.rh.rh_capsule.capsule.repository.CapsuleBoxRepository;
 import com.rh.rh_capsule.capsule.repository.CapsuleRepository;
+import com.rh.rh_capsule.utils.S3Uploader;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +29,8 @@ public class CapsuleService {
     private final CapsuleRepository capsuleRepository;
     private final UserRepository userRepository;
     private final EntityManager em;
+    private final S3Uploader s3Uploader;
+    private final JwtProvider jwtProvider;
     public void createCapsuleBox(CapsuleBoxCreateDTO capsuleBoxCreateDTO, Long userId) {
         if(hasActiveCapsuleBox(userId)){
             throw new CapsuleException(CapsuleErrorCode.ACTIVE_CAPSULE_BOX_ALREADY_EXISTS);
@@ -44,7 +51,7 @@ public class CapsuleService {
         }
     }
 
-    public void createCapsule(CapsuleCreateDTO capsuleCreateDTO, String imageUrl, String audioUrl) {
+    public void createCapsule(CapsuleCreateDTO capsuleCreateDTO, MultipartFile image, MultipartFile audio, String accessToken) {
         Optional<CapsuleBox> capsuleBox = capsuleBoxRepository.findById(capsuleCreateDTO.capsuleBoxId());
 
         if(!capsuleBox.isPresent()){
@@ -53,6 +60,41 @@ public class CapsuleService {
 
         if(!capsuleBox.get().getClosedAt().isAfter(LocalDateTime.now())){
             throw new CapsuleException(CapsuleErrorCode.NOT_ACTIVE_CAPSULE_BOX);
+        }
+
+        String imageUrl = null;
+        String audioUrl = null;
+        if(image != null){
+            try {
+                imageUrl = s3Uploader.uploadFileToS3(image, capsuleCreateDTO.userId().toString(), capsuleCreateDTO.capsuleBoxId().toString(), "image");
+            }catch (Exception e){
+                throw new CapsuleException(CapsuleErrorCode.IMAGE_UPLOAD_FAILED);
+            }
+        }
+        if(audio != null){
+            try {
+                audioUrl = s3Uploader.uploadFileToS3(audio, capsuleCreateDTO.userId().toString(), capsuleCreateDTO.capsuleBoxId().toString(), "audio");
+            }catch (Exception e){
+                throw new CapsuleException(CapsuleErrorCode.AUDIO_UPLOAD_FAILED);
+            }
+
+        }
+
+        Boolean isMine = false;
+
+        if(accessToken != null){
+            Long userId = jwtProvider.extractId(accessToken);
+            if(userId.equals(capsuleCreateDTO.userId())){
+                isMine = true;
+            }else {
+                throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+            }
+
+            List<Capsule> capsules = capsuleBox.get().getCapsules();
+            Optional<Capsule> mineCapsule = capsules.stream().filter(capsule -> capsule.getIsMine()).findFirst();
+            if(mineCapsule.isPresent()){
+                throw new CapsuleException(CapsuleErrorCode.MINE_CAPSULE_ALREADY_EXISTS);
+            }
         }
 
         Capsule newCapsule = Capsule.builder()
@@ -64,7 +106,7 @@ public class CapsuleService {
                 .imageUrl(imageUrl)
                 .audioUrl(audioUrl)
                 .createdAt(LocalDateTime.now())
-                .isMine(capsuleCreateDTO.isMine())
+                .isMine(isMine)
                 .build();
         try{
             capsuleRepository.save(newCapsule);
