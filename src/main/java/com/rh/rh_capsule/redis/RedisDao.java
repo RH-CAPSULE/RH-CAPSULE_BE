@@ -53,7 +53,11 @@ public class RedisDao {
     }
 
     public String getVerification(String mail) {
-        return redisTemplate.opsForValue().get(mail);
+        String verificationStatus = redisTemplate.opsForValue().get(mail);
+        if(verificationStatus == null){
+            return "Not Verified";
+        }
+        return verificationStatus;
     }
 
     public void deleteVerification(String userEmail) {
