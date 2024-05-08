@@ -26,7 +26,8 @@ public class GlobalExceptionHandler {
         body.put("errorCode", authErrorCode.getExceptionCode());
         body.put("message", authErrorCode.getMessage());
 
-        return new ResponseEntity<>(body, HttpStatus.valueOf(authErrorCode.getStatusCode()));
+//        return new ResponseEntity(body, HttpStatus.valueOf(authErrorCode.getStatusCode()));
+        return ResponseEntity.status(authErrorCode.getStatusCode()).body(body);
     }
 
     @ExceptionHandler(CapsuleException.class)
@@ -37,8 +38,8 @@ public class GlobalExceptionHandler {
         body.put("status", capsuleErrorCode.getStatusCode());
         body.put("errorCode", capsuleErrorCode.getExceptionCode());
         body.put("message", capsuleErrorCode.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.valueOf(capsuleErrorCode.getStatusCode()));
+        return ResponseEntity.status(capsuleErrorCode.getStatusCode()).body(body);
+//        return new ResponseEntity<>(body, HttpStatus.valueOf(capsuleErrorCode.getStatusCode()));
     }
 }
 
