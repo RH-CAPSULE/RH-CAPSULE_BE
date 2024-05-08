@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.controller;
 
+import com.rh.rh_capsule.auth.controller.dto.SignUpDTO;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
@@ -27,12 +28,9 @@ public class AuthController {
     private final AuthenticationContext authenticationContext;
 
     @PostMapping("/api/auth/signup")
-    public ResponseEntity<String> signUp(@RequestBody UserDTO userDTO) {
-        Long id = authService.signUp(userDTO);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/users/{id}")
-                .buildAndExpand(id).toUri();
-        return ResponseEntity.created(location).body("회원가입이 완료되었습니다.");
+    public ResponseEntity<String> signUp(@RequestBody SignUpDTO signUpDTO) {
+        authService.signUp(signUpDTO);
+        return ResponseEntity.ok().body("회원가입이 완료되었습니다.");
     }
 
     @PostMapping("/api/auth/signin")
