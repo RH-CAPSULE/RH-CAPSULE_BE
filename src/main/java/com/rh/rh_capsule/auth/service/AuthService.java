@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.service;
 
+import com.rh.rh_capsule.auth.controller.dto.SignUpDTO;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
@@ -29,10 +30,12 @@ public class AuthService {
         redisDao.setAccessTokenSignOut(accessToken);
     }
 
-    public Long signUp(UserDTO userDTO) {
+    public void signUp(SignUpDTO signUpDTO) {
 
-        String userEmail = userDTO.userEmail();
-        String password = userDTO.password();
+        String userEmail = signUpDTO.userEmail();
+        String password = signUpDTO.password();
+        String name = signUpDTO.username();
+
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
         if (isExist) {
@@ -49,10 +52,10 @@ public class AuthService {
 
         data.setUserEmail(userEmail);
         data.setPassword(bCryptPasswordEncoder.encode(password));
+        data.setUsername(name);
         data.setAuthority(UserAuthority.NORMAL_USER);
 
         userRepository.save(data);
-        return userRepository.findByUserEmail(userEmail).getId();
     }
 
     public TokenResponse signIn(UserDTO userDTO) {
