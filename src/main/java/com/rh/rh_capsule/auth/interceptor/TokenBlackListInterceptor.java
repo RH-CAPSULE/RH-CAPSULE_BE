@@ -19,7 +19,7 @@ public class TokenBlackListInterceptor implements HandlerInterceptor{
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         Optional<String> accessToken = AuthenticationExtractor.extractAccessToken(request);
-        if (redisDao.isKeyOfAccessTokenInBlackList(accessToken.get())) {
+        if (accessToken.isPresent() && redisDao.isKeyOfAccessTokenInBlackList(accessToken.get())) {
             throw new AuthException(AuthErrorCode.ALREADY_SIGN_OUT);
         }
         return true;
