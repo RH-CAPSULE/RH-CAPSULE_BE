@@ -20,7 +20,8 @@ public enum AuthErrorCode {
     INVALID_VERIFICATION(401, 1014, "이메일 인증이 완료되지 않았습니다."),
     EMAIL_NOT_FOUND(404, 1015, "이메일이 존재하지 않습니다."),
     OAUTH_ERROR(400, 2000, "OAuth 인증 중 오류가 발생했습니다."),
-    USER_NOT_FOUND(404, 1016, "사용자를 찾을 수 없습니다."),;
+    USER_NOT_FOUND(404, 1016, "사용자를 찾을 수 없습니다."),
+    INVALID_REFRESH_TOKEN(401, 1017, "리프레시 토큰이 유효하지 않습니다.");
 
     private final int statusCode;
     private final int exceptionCode;

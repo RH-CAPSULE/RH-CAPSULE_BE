@@ -1,8 +1,6 @@
 package com.rh.rh_capsule.auth.service;
 
-import com.rh.rh_capsule.auth.controller.dto.SignUpDTO;
-import com.rh.rh_capsule.auth.controller.dto.UserDTO;
-import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
+import com.rh.rh_capsule.auth.controller.dto.*;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
@@ -87,5 +85,15 @@ public class AuthService {
         userRepository.save(user);
 
         redisDao.deleteRefreshToken(user.getId().toString());
+    }
+
+    public ReissueTokenResponse reissueToken(Long userId, TokenReissueDTO tokenReissueDTO) {
+        if(!jwtProvider.isRefreshTokenExpired(tokenReissueDTO.refreshToken())){
+            String refreshToken = redisDao.getRefreshToken(userId.toString());
+            if(!refreshToken.equals(tokenReissueDTO.refreshToken())){
+                throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
+            }
+        }
+        return jwtProvider.reissueTokens(userId);
     }
 }
