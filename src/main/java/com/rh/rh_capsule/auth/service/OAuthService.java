@@ -37,7 +37,7 @@ public class OAuthService {
         User newUser = new User();
         newUser.setUserEmail(userEmail);
         newUser.setPassword(OAUTH_PASSWORD);
-        newUser.setUsername(oAuthUser.username());
+        newUser.setUserName(oAuthUser.username());
         newUser.setAuthority(UserAuthority.NORMAL_USER);
         userRepository.save(newUser);
         return jwtProvider.createTokens(newUser.getId());
