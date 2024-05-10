@@ -3,6 +3,7 @@ package com.rh.rh_capsule.auth.config;
 import com.rh.rh_capsule.auth.interceptor.LoginInterceptor;
 import com.rh.rh_capsule.auth.interceptor.TokenBlackListInterceptor;
 import com.rh.rh_capsule.auth.interceptor.TokenExistenceInterceptor;
+import com.rh.rh_capsule.auth.interceptor.TokenReissueInterceptor;
 import com.rh.rh_capsule.auth.support.AuthArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class AuthConfig implements WebMvcConfigurer {
 
     private final LoginInterceptor loginInterceptor;
     private final TokenBlackListInterceptor tokenBlackListInterceptor;
+    private final TokenReissueInterceptor tokenReissueInterceptor;
     private final TokenExistenceInterceptor tokenExistenceInterceptor;
 
     private final AuthArgumentResolver authArgumentResolver;
@@ -39,11 +41,14 @@ public class AuthConfig implements WebMvcConfigurer {
         registry.addInterceptor(tokenBlackListInterceptor)
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/api/capsule/create");
+                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/api/capsule/create", "/api/token-reissue");
         registry.addInterceptor(loginInterceptor)
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/api/capsule/create");
+                .excludePathPatterns("/api/auth/**", "/oauth/**", "/swagger-ui/**", "/v3/**", "/index.html", "/api/capsule/create", "/api/token-reissue");
+        registry.addInterceptor(tokenReissueInterceptor)
+                .order(3)
+                .addPathPatterns("/api/token-reissue");
 
     }
 
