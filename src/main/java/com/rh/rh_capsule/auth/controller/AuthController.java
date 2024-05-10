@@ -1,8 +1,6 @@
 package com.rh.rh_capsule.auth.controller;
 
-import com.rh.rh_capsule.auth.controller.dto.SignUpDTO;
-import com.rh.rh_capsule.auth.controller.dto.UserDTO;
-import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
+import com.rh.rh_capsule.auth.controller.dto.*;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.service.AuthService;
@@ -43,10 +41,15 @@ public class AuthController {
         AuthenticationExtractor.extractAccessToken(request).ifPresent(accessToken -> authService.signOut(userId, accessToken));
         return ResponseEntity.ok().body("로그이웃 되었습니다.");
     }
-
     @PostMapping("/api/auth/reset-pw")
     public ResponseEntity<String> resetPassword(@RequestBody UserDTO userDTO) {
         authService.resetPassword(userDTO);
         return ResponseEntity.ok().body("비밀번호가 재설정되었습니다.");
+    }
+
+    @PostMapping("/api/token-reissue")
+    public ResponseEntity<ReissueTokenResponse> reissueToken(@RequestBody TokenReissueDTO tokenReissueDTO,
+                                                      @AuthUser Long userId) {
+        return ResponseEntity.ok(authService.reissueToken(userId, tokenReissueDTO));
     }
 }
