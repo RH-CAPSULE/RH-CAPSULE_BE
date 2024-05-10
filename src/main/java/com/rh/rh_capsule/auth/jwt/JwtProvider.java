@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.jwt;
 
+import com.rh.rh_capsule.auth.controller.dto.ReissueTokenResponse;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.AuthErrorCode;
@@ -44,6 +45,12 @@ public class JwtProvider {
         String refreshToken = createRefreshToken(userId);
 
         return new TokenResponse(accessToken, refreshToken);
+    }
+
+    public ReissueTokenResponse reissueTokens(Long userId) {
+        String accessToken = createAccessToken(userId);
+
+        return new ReissueTokenResponse(accessToken);
     }
 
     private String createAccessToken(Long id) {
@@ -94,6 +101,30 @@ public class JwtProvider {
         return Date.from(now.plusSeconds(REFRESH_TOKEN_EXPIRATION_TIME).atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    public Boolean isRefreshTokenExpired(String refreshToken) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secret.getBytes())
+                    .parseClaimsJws(refreshToken)
+                    .getBody();
+            return claims.getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (SecurityException e) {
+            throw new AuthException(AuthErrorCode.SECURITY_ERROR);
+        } catch (MalformedJwtException e) {
+            throw new AuthException(AuthErrorCode.MALFORMED_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        } catch (SignatureException e) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN_FORMAT);
+        } catch (JwtException e){
+            //위애서 안걸린 jwt 기타 익셉션
+            throw new AuthException(AuthErrorCode.JWT_ERROR);
+        }
+    }
     public Long extractId(String token) {
         try {
             Claims claims = Jwts.parser()
@@ -131,16 +162,18 @@ public class JwtProvider {
             Claims expiredClaims = e.getClaims(); //catch 후 id 반환하고 이를 사용해 엑세스 토큰을 추출할 수 있음
             return expiredClaims.get("id", Long.class);
         } catch (SecurityException e) {
-            throw new RuntimeException();
+            throw new AuthException(AuthErrorCode.SECURITY_ERROR);
         } catch (MalformedJwtException e) {
-            //익셉션 만들어서 던지기
-            throw new RuntimeException();
+            throw new AuthException(AuthErrorCode.MALFORMED_TOKEN);
         } catch (UnsupportedJwtException e) {
-            //익셉션 만들어서 던지기
-            throw new RuntimeException();
+            throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN);
         } catch (IllegalArgumentException e) {
-            //익셉션 만들어서 던지기
-            throw new RuntimeException();
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        } catch (SignatureException e) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN_FORMAT);
+        } catch (JwtException e){
+            //위애서 안걸린 jwt 기타 익셉션
+            throw new AuthException(AuthErrorCode.JWT_ERROR);
         }
     }
 
