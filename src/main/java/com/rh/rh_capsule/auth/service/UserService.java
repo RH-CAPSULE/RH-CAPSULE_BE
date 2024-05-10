@@ -20,7 +20,7 @@ public class UserService {
         if(!user.isPresent()){
             throw  new AuthException(AuthErrorCode.USER_NOT_FOUND);
         }
-        return new UserDetailDTO(user.get().getUserEmail(), user.get().getUsername());
+        return new UserDetailDTO(user.get().getUserEmail(), user.get().getUserName());
     }
 
 }
