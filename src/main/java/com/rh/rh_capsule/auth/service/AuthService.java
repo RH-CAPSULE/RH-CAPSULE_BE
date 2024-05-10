@@ -32,7 +32,7 @@ public class AuthService {
 
         String userEmail = signUpDTO.userEmail();
         String password = signUpDTO.password();
-        String name = signUpDTO.username();
+        String name = signUpDTO.userName();
 
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
@@ -50,7 +50,7 @@ public class AuthService {
 
         data.setUserEmail(userEmail);
         data.setPassword(bCryptPasswordEncoder.encode(password));
-        data.setUsername(name);
+        data.setUserName(name);
         data.setAuthority(UserAuthority.NORMAL_USER);
 
         userRepository.save(data);
