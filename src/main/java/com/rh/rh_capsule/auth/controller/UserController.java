@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    @GetMapping("/api/user")
+    @GetMapping("/api/auth/user")
     public ResponseEntity<UserDetailDTO> getUser(@AuthUser Long userId) {
 
         return ResponseEntity.ok().body(userService.getUser(userId));
