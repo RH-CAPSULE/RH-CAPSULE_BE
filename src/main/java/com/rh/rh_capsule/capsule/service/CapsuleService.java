@@ -93,7 +93,7 @@ public class CapsuleService {
             List<Capsule> capsules = capsuleBox.get().getCapsules();
             Optional<Capsule> mineCapsule = capsules.stream().filter(capsule -> capsule.getIsMine()).findFirst();
             if(mineCapsule.isPresent()){
-                throw new CapsuleException(CapsuleErrorCode.MINE_CAPSULE_ALREADY_EXISTS);
+                throw new CapsuleException(CapsuleErrorCode.EXISTING_OWN_CAPSULE);
             }
         }
 
