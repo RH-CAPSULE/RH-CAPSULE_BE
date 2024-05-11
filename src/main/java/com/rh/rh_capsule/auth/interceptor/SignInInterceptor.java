@@ -13,16 +13,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
-public class LoginInterceptor implements HandlerInterceptor {
+public class SignInInterceptor implements HandlerInterceptor {
 
     private final JwtProvider jwtProvider;
     private final AuthenticationContext authenticationContext;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            return true;
-        }
-
         String accessToken = AuthenticationExtractor.extractAccessToken(request)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.UNAUTHORIZED));
 
