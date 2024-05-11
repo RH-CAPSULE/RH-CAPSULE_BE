@@ -27,7 +27,6 @@ public class AuthConfig implements WebMvcConfigurer {
     private final LoginInterceptor loginInterceptor;
     private final TokenBlackListInterceptor tokenBlackListInterceptor;
     private final TokenReissueInterceptor tokenReissueInterceptor;
-    private final TokenExistenceInterceptor tokenExistenceInterceptor;
 
     private final AuthArgumentResolver authArgumentResolver;
 
