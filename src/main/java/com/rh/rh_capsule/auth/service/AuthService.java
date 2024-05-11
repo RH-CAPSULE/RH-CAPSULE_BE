@@ -34,6 +34,11 @@ public class AuthService {
         String password = signUpDTO.password();
         String name = signUpDTO.userName();
 
+
+        if(userEmail == null || password == null || name == null){
+            throw new AuthException(AuthErrorCode.INVALID_INPUT);
+        }
+
         Boolean isExist = userRepository.existsByUserEmail(userEmail);
 
         if (isExist) {
