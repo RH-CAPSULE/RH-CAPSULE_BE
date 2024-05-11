@@ -16,9 +16,6 @@ import java.util.Optional;
 public class TokenExistenceInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            return true;
-        }
         Optional<String> accessToken = AuthenticationExtractor.extractAccessToken(request);
         if(!accessToken.isPresent()){
             throw new AuthException(AuthErrorCode.TOKEN_EMPTY);
