@@ -54,7 +54,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/capsule-box/**", DELETE)
                 .addIncludePattern("/api/history-capsule-boxes", GET)
                 .addIncludePattern("/api/capsule-list/**", GET)
-                .addIncludePattern("/api/capsule", GET)
+                .addIncludePattern("/api/capsule/**", GET)
                 .addIncludePattern("/api/capsule", POST)
 
                 .addExcludePattern("/api/auth/token-reissue", POST)
@@ -72,7 +72,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/capsule-box/**", DELETE)
                 .addIncludePattern("/api/history-capsule-boxes", GET)
                 .addIncludePattern("/api/capsule-list/**", GET)
-                .addIncludePattern("/api/capsule", GET)
+                .addIncludePattern("/api/capsule/**", GET)
                 .addIncludePattern("/api/capsule", POST)
 
                 .addExcludePattern("/api/auth/token-reissue", POST)
