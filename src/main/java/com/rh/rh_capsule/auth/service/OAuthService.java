@@ -20,9 +20,6 @@ public class OAuthService {
     private final RestTemplateOAuthRequester restTemplateOAuthRequester;
     private final UserRepository userRepository;
 
-    @Value("${oauth2.provider.google.redirect-uri}")
-    private String GOOGLE_REDIRECT_URI;
-
     private static final String OAUTH_PASSWORD = "oauth";
     public String signInUri(String redirectUri, String provider) {
         return restTemplateOAuthRequester.signInUri(Provider.from(provider), redirectUri);
@@ -41,14 +38,5 @@ public class OAuthService {
         newUser.setAuthority(UserAuthority.NORMAL_USER);
         userRepository.save(newUser);
         return jwtProvider.createTokens(newUser.getId());
-    }
-
-    public String getRedirectUri(String provider) {
-        switch (provider.toLowerCase()){
-            case "google":
-                return GOOGLE_REDIRECT_URI;
-            default:
-                throw new IllegalArgumentException("Invalid provider");
-        }
     }
 }

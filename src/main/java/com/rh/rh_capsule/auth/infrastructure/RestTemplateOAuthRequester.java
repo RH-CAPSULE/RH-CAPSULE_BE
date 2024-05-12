@@ -13,6 +13,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import com.rh.rh_capsule.auth.service.OAuthProviderProperties.OAuthProviderProperty;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -84,8 +86,12 @@ public class RestTemplateOAuthRequester implements OAuthRequester{
     private OAuthTokenResponse requestOAuthToken(URI tokenUri, HttpEntity<MultiValueMap<String, String>> request) {
         try {
             return restTemplate.postForEntity(tokenUri, request, OAuthTokenResponse.class).getBody();
+        } catch (HttpClientErrorException e) {
+            throw new AuthException(AuthErrorCode.HTTP_REQUEST_FAILED);
+        } catch (ResourceAccessException e){
+            throw new AuthException(AuthErrorCode.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            throw new AuthException(AuthErrorCode.OAUTH_ERROR);
+            throw new AuthException(AuthErrorCode.OAUTH_UNEXPECTED_ERROR);
         }
     }
 
@@ -108,8 +114,12 @@ public class RestTemplateOAuthRequester implements OAuthRequester{
             ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {
             });
             return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new AuthException(AuthErrorCode.HTTP_REQUEST_FAILED);
+        } catch (ResourceAccessException e){
+            throw new AuthException(AuthErrorCode.SERVICE_UNAVAILABLE);
         } catch (Exception e) {
-            throw new AuthException(AuthErrorCode.OAUTH_ERROR);
+            throw new AuthException(AuthErrorCode.OAUTH_UNEXPECTED_ERROR);
         }
     }
 }
