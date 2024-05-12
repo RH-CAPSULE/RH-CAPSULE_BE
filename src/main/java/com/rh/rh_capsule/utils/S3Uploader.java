@@ -26,12 +26,18 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadFileToS3(MultipartFile file, String userId, String capsuleBoxId, String type) throws IOException {
-        String origFileName = file.getOriginalFilename();
+    public String uploadFileToS3(MultipartFile file, String userId, String capsuleBoxId, FileType type) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String extension = "";
+
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
-        String newFileName = "capsuleS3/" +  userId + "/" + capsuleBoxId + "/" + type + "/" + UUID.randomUUID().toString();
+        String newFileName = "capsuleS3/" +  userId + "/" + capsuleBoxId + "/" + type.getType() + "/" + UUID.randomUUID().toString() + extension;
 
         amazonS3.putObject(bucket, newFileName, file.getInputStream(), metadata);
         return amazonS3.getUrl(bucket, newFileName).toString();
