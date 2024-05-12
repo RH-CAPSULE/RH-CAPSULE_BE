@@ -3,6 +3,7 @@ package com.rh.rh_capsule.capsule.controller;
 import com.rh.rh_capsule.auth.support.AuthUser;
 import com.rh.rh_capsule.capsule.dto.*;
 import com.rh.rh_capsule.capsule.service.CapsuleService;
+import com.rh.rh_capsule.capsule.service.dto.UserType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,15 +49,17 @@ public class CapsuleController {
     public ResponseEntity<?> createCapsule(@RequestPart(value = "capsule") @Schema(implementation = CapsuleCreateDTO.class) CapsuleCreateDTO capsuleCreateDTO,
                                            @RequestPart(value = "image", required = false) MultipartFile image,
                                            @RequestPart(value = "audio", required = false) MultipartFile audio,
-                                           HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        String token = null;
+                                           @AuthUser Long id) {
 
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            token = authorization.substring(7);
+        capsuleService.createCapsuleProcess(capsuleCreateDTO, image, audio, UserType.USER, id);
+        return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
+    }
 
-        }
-        capsuleService.createCapsule(capsuleCreateDTO, image, audio, token);
+    @PostMapping(value = "/api/guest/capsule", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> createGuestCapsule(@RequestPart(value = "capsule") @Schema(implementation = CapsuleCreateDTO.class) CapsuleCreateDTO capsuleCreateDTO,
+                                                @RequestPart(value = "image", required = false) MultipartFile image,
+                                                @RequestPart(value = "audio", required = false) MultipartFile audio) {
+        capsuleService.createCapsuleProcess(capsuleCreateDTO, image, audio, UserType.GUEST, null);
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
     }
     @GetMapping("/api/capsule-list/{capsuleBoxId}")
