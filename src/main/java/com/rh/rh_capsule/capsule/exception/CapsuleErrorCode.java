@@ -16,7 +16,9 @@ public enum CapsuleErrorCode implements ErrorCode {
     CAPSULE_NOT_FOUND(404, 3008, "요청된 캡슐을 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAILED(400, 3009, "이미지 업로드에 실패했습니다."),
     AUDIO_UPLOAD_FAILED(400, 3010, "오디오 업로드에 실패했습니다."),
-    EXISTING_OWN_CAPSULE(409, 3011, "이미 내 캡슐이 존재합니다."),;
+    EXISTING_OWN_CAPSULE(409, 3011, "이미 내 캡슐이 존재합니다."),
+    INVALID_CAPSULE_BOX_USER(403, 3012, "캡슐함의 사용자와 요청한 사용자가 일치하지 않습니다.")
+    ;
 
     private final int statusCode;
     private final int exceptionCode;
