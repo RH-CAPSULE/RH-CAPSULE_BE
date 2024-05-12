@@ -1,8 +1,6 @@
 package com.rh.rh_capsule.capsule.service;
 
 import com.rh.rh_capsule.auth.domain.User;
-import com.rh.rh_capsule.auth.exception.AuthErrorCode;
-import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.repository.UserRepository;
 import com.rh.rh_capsule.capsule.domain.Capsule;
@@ -12,6 +10,8 @@ import com.rh.rh_capsule.capsule.exception.CapsuleErrorCode;
 import com.rh.rh_capsule.capsule.exception.CapsuleException;
 import com.rh.rh_capsule.capsule.repository.CapsuleBoxRepository;
 import com.rh.rh_capsule.capsule.repository.CapsuleRepository;
+import com.rh.rh_capsule.capsule.service.dto.UserType;
+import com.rh.rh_capsule.utils.FileType;
 import com.rh.rh_capsule.utils.S3Uploader;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -51,54 +51,41 @@ public class CapsuleService {
         }
     }
 
-    public void createCapsule(CapsuleCreateDTO capsuleCreateDTO, MultipartFile image, MultipartFile audio, String accessToken) {
-        Optional<CapsuleBox> capsuleBox = capsuleBoxRepository.findById(capsuleCreateDTO.capsuleBoxId());
+    public void createCapsuleProcess(CapsuleCreateDTO capsuleCreateDTO, MultipartFile image, MultipartFile audio, UserType accountType, Long userId) {
+        CapsuleBox capsuleBox = capsuleBoxRepository.findById(capsuleCreateDTO.capsuleBoxId())
+                .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
 
-        if(!capsuleBox.isPresent()){
-            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
-        }
 
-        if(!capsuleBox.get().getClosedAt().isAfter(LocalDateTime.now())){
+        if (!capsuleBox.getClosedAt().isAfter(LocalDateTime.now())) {
             throw new CapsuleException(CapsuleErrorCode.NOT_ACTIVE_CAPSULE_BOX);
         }
 
-        String imageUrl = null;
-        String audioUrl = null;
-        if(image != null){
-            try {
-                imageUrl = s3Uploader.uploadFileToS3(image, capsuleCreateDTO.userId().toString(), capsuleCreateDTO.capsuleBoxId().toString(), "image");
-            }catch (Exception e){
-                throw new CapsuleException(CapsuleErrorCode.IMAGE_UPLOAD_FAILED);
-            }
-        }
-        if(audio != null){
-            try {
-                audioUrl = s3Uploader.uploadFileToS3(audio, capsuleCreateDTO.userId().toString(), capsuleCreateDTO.capsuleBoxId().toString(), "audio");
-            }catch (Exception e){
-                throw new CapsuleException(CapsuleErrorCode.AUDIO_UPLOAD_FAILED);
+        Long capsuleBoxUserId = capsuleBox.getUser().getId();
+        if (accountType.equals(UserType.GUEST)) {
+            createCapsule(capsuleBox, capsuleCreateDTO, image, audio, capsuleBoxUserId, false);
+        } else if (accountType.equals(UserType.USER)) {
+            if (userId != capsuleBoxUserId) {
+                throw new CapsuleException(CapsuleErrorCode.INVALID_CAPSULE_BOX_USER);
             }
 
-        }
+            List<Capsule> capsules = capsuleBox.getCapsules();
 
-        Boolean isMine = false;
+            Optional<Capsule> capsule = capsules.stream().filter(capsule1 -> capsule1.getIsMine()).findFirst();
 
-        if(accessToken != null){
-            Long userId = jwtProvider.extractId(accessToken);
-            if(userId.equals(capsuleCreateDTO.userId())){
-                isMine = true;
-            }else {
-                throw new AuthException(AuthErrorCode.UNAUTHORIZED);
-            }
-
-            List<Capsule> capsules = capsuleBox.get().getCapsules();
-            Optional<Capsule> mineCapsule = capsules.stream().filter(capsule -> capsule.getIsMine()).findFirst();
-            if(mineCapsule.isPresent()){
+            if(capsule.isPresent()){
                 throw new CapsuleException(CapsuleErrorCode.EXISTING_OWN_CAPSULE);
             }
+            createCapsule(capsuleBox, capsuleCreateDTO, image, audio, capsuleBoxUserId, true);
         }
 
+    }
+
+    private void createCapsule(CapsuleBox capsuleBox, CapsuleCreateDTO capsuleCreateDTO, MultipartFile image, MultipartFile audio, Long userId, Boolean isMine) {
+        String imageUrl = uploadImage(capsuleCreateDTO, image, userId);
+        String audioUrl = uploadAudio(capsuleCreateDTO, audio, userId);
+
         Capsule newCapsule = Capsule.builder()
-                .capsuleBox(capsuleBox.get())
+                .capsuleBox(capsuleBox)
                 .color(capsuleCreateDTO.color())
                 .title(capsuleCreateDTO.title())
                 .content(capsuleCreateDTO.content())
@@ -115,6 +102,27 @@ public class CapsuleService {
         }
     }
 
+    private String uploadImage(CapsuleCreateDTO capsuleCreateDTO, MultipartFile image, Long userId) {
+        if (image == null) {
+            return null;
+        }
+        try {
+            return s3Uploader.uploadFileToS3(image, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.IMAGE);
+        } catch (Exception e) {
+            throw new CapsuleException(CapsuleErrorCode.IMAGE_UPLOAD_FAILED);
+        }
+    }
+
+    private String uploadAudio(CapsuleCreateDTO capsuleCreateDTO, MultipartFile audio, Long userId) {
+        if (audio == null) {
+            return null;
+        }
+        try {
+            return s3Uploader.uploadFileToS3(audio, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.AUDIO);
+        } catch (Exception e) {
+            throw new CapsuleException(CapsuleErrorCode.AUDIO_UPLOAD_FAILED);
+        }
+    }
 
     public ActiveCapsuleBoxDto getCapsuleBoxList(Long userId) {
         CapsuleBox activeCapsuleBox = findActiveCapsuleBox(userId);
