@@ -56,6 +56,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/capsule-list/**", GET)
                 .addIncludePattern("/api/capsule/**", GET)
                 .addIncludePattern("/api/capsule", POST)
+                .addIncludePattern("/api/notice", GET)
 
                 .addExcludePattern("/api/auth/token-reissue", POST)
                 ;
@@ -74,6 +75,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/capsule-list/**", GET)
                 .addIncludePattern("/api/capsule/**", GET)
                 .addIncludePattern("/api/capsule", POST)
+                .addIncludePattern("/api/notice", GET)
 
                 .addExcludePattern("/api/auth/token-reissue", POST)
                 ;
