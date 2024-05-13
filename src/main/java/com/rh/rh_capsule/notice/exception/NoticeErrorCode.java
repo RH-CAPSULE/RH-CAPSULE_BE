@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum NoticeErrorCode implements ErrorCode {
-    NOTICE_NOT_FOUND(404, 1001, "공지사항을 찾을 수 없습니다."),
+    NOTICE_NOT_FOUND(404, 4000, "공지사항을 찾을 수 없습니다."),
     ;
 
     private final int statusCode;
