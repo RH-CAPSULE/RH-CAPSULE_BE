@@ -39,16 +39,16 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.INVALID_INPUT);
         }
 
-        Boolean isExist = userRepository.existsByUserEmail(userEmail);
-
-        if (isExist) {
-            throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
-        }
-
-        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
-            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
-        }
-        redisDao.deleteVerification(userEmail);
+//        Boolean isExist = userRepository.existsByUserEmail(userEmail);
+//
+//        if (isExist) {
+//            throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
+//        }
+//
+//        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
+//            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
+//        }
+//        redisDao.deleteVerification(userEmail);
 
         //이메인 인증 구현
         User data = new User();
