@@ -12,7 +12,7 @@ import com.rh.rh_capsule.capsule.repository.CapsuleBoxRepository;
 import com.rh.rh_capsule.capsule.repository.CapsuleRepository;
 import com.rh.rh_capsule.capsule.service.dto.UserType;
 import com.rh.rh_capsule.utils.FileType;
-import com.rh.rh_capsule.utils.S3Uploader;
+import com.rh.rh_capsule.utils.S3Service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class CapsuleService {
     private final CapsuleRepository capsuleRepository;
     private final UserRepository userRepository;
     private final EntityManager em;
-    private final S3Uploader s3Uploader;
+    private final S3Service s3Service;
     private final JwtProvider jwtProvider;
     public void createCapsuleBox(CapsuleBoxCreateDTO capsuleBoxCreateDTO, Long userId) {
         if(hasActiveCapsuleBox(userId)){
@@ -107,7 +107,7 @@ public class CapsuleService {
             return null;
         }
         try {
-            return s3Uploader.uploadFileToS3(image, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.IMAGE);
+            return s3Service.uploadFileToS3(image, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.IMAGE);
         } catch (Exception e) {
             throw new CapsuleException(CapsuleErrorCode.IMAGE_UPLOAD_FAILED);
         }
@@ -118,7 +118,7 @@ public class CapsuleService {
             return null;
         }
         try {
-            return s3Uploader.uploadFileToS3(audio, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.AUDIO);
+            return s3Service.uploadFileToS3(audio, userId.toString(), capsuleCreateDTO.capsuleBoxId().toString(), FileType.AUDIO);
         } catch (Exception e) {
             throw new CapsuleException(CapsuleErrorCode.AUDIO_UPLOAD_FAILED);
         }
