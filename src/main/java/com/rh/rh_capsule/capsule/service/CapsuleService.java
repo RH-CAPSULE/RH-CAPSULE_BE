@@ -15,6 +15,11 @@ import com.rh.rh_capsule.utils.FileType;
 import com.rh.rh_capsule.utils.S3Service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +29,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CapsuleService {
     private final CapsuleBoxRepository capsuleBoxRepository;
     private final CapsuleRepository capsuleRepository;
@@ -167,33 +173,17 @@ public class CapsuleService {
         return capsuleBox.get();
     }
 
-    public List<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, PaginationDTO paginationDTO) {
-        List<CapsuleBox> capsuleBoxes = capsuleBoxRepository.findByUserId(userId);
+    public List<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        List<CapsuleBox> historyCapsuleBoxes = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isAfter(LocalDateTime.now())).toList();
+        Page<CapsuleBox> capsuleBoxPage = capsuleBoxRepository.findByUserIdAndOpenedAtBefore(userId, LocalDateTime.now(), pageable);
 
-        if(historyCapsuleBoxes.size() == 1){
-            return List.of(new HistoryCapsuleBoxes(
-                    historyCapsuleBoxes.get(0).getId(),
-                    historyCapsuleBoxes.get(0).getTheme(),
-                    historyCapsuleBoxes.get(0).getOpenedAt(),
-                    historyCapsuleBoxes.get(0).getClosedAt(),
-                    historyCapsuleBoxes.get(0).getCreatedAt()
-            ));
-        }
-        historyCapsuleBoxes.sort((box1, box2) -> box2.getCreatedAt().compareTo(box1.getCreatedAt()));
-
-
-        Long start = paginationDTO.page() * paginationDTO.size();
-        Long end = Math.min(start + paginationDTO.size(), historyCapsuleBoxes.size());
-        List<CapsuleBox> pagedHistoryCapsuleBoxes = historyCapsuleBoxes.subList(start.intValue(), end.intValue());
-
-        return pagedHistoryCapsuleBoxes.stream().map(box -> new HistoryCapsuleBoxes(
-                box.getId(),
-                box.getTheme(),
-                box.getOpenedAt(),
-                box.getClosedAt(),
-                box.getCreatedAt()
+        return capsuleBoxPage.stream().map(capsuleBox -> new HistoryCapsuleBoxes(
+                capsuleBox.getId(),
+                capsuleBox.getTheme(),
+                capsuleBox.getOpenedAt(),
+                capsuleBox.getClosedAt(),
+                capsuleBox.getCreatedAt()
         )).toList();
     }
 
@@ -211,38 +201,29 @@ public class CapsuleService {
         }
     }
 
-    public List<CapsuleListDTO> getCapsuleList(Long capsuleBoxId, PaginationDTO paginationDTO) {
-        Optional<CapsuleBox> capsuleBox = capsuleBoxRepository.findById(capsuleBoxId);
+    public List<CapsuleListDTO> getCapsuleList(Long capsuleBoxId, Long userId, int page, int size) {
+        CapsuleBox capsuleBox = capsuleBoxRepository.findById(capsuleBoxId)
+                .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
 
-        if(!capsuleBox.isPresent()){
-            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
+        if (!capsuleBox.getOpenedAt().isBefore(LocalDateTime.now())) {
+            throw new CapsuleException(CapsuleErrorCode.NOT_OPENED_CAPSULE_BOX);
         }
 
-        List<Capsule> capsules = capsuleBox.get().getCapsules();
-        if(capsules.size() == 1){
-            return List.of(new CapsuleListDTO(
-                    capsules.get(0).getId(),
-                    capsules.get(0).getColor(),
-                    capsules.get(0).getWriter(),
-                    capsules.get(0).getIsMine(),
-                    capsules.get(0).getCreatedAt()
-            ));
+        if(capsuleBox.getUser().getId() != userId){
+            throw new CapsuleException(CapsuleErrorCode.INVALID_CAPSULE_BOX_USER);
         }
 
-        capsules.sort((capsule1, capsule2) -> capsule2.getCreatedAt().compareTo(capsule1.getCreatedAt()));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Long start = paginationDTO.page() * paginationDTO.size();
-        Long end = Math.min(start + paginationDTO.size(), capsules.size());
+        Page<Capsule> capsulePage = capsuleRepository.findByCapsuleBoxId(capsuleBoxId, pageable);
 
-        List<Capsule> pagedCapsules = capsules.subList(start.intValue(), end.intValue());
-
-        return pagedCapsules.stream().map(capsule -> new CapsuleListDTO(
+        return capsulePage.stream().map(capsule -> new CapsuleListDTO(
                 capsule.getId(),
                 capsule.getColor(),
-                capsule.getWriter(),
+                capsule.getTitle(),
                 capsule.getIsMine(),
                 capsule.getCreatedAt()
-                )).toList();
+        )).toList();
     }
 
     public CapsuleDTO getCapsule(Long capsuleId) {
