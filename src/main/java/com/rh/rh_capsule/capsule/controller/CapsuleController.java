@@ -4,6 +4,7 @@ import com.rh.rh_capsule.auth.support.AuthUser;
 import com.rh.rh_capsule.capsule.dto.*;
 import com.rh.rh_capsule.capsule.service.CapsuleService;
 import com.rh.rh_capsule.capsule.service.dto.UserType;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,10 @@ public class CapsuleController {
     }
 
     @GetMapping("/api/history-capsule-boxes")
-    public ResponseEntity<List<HistoryCapsuleBoxes>> getHistoryCapsuleBoxes(@AuthUser Long userId, @RequestBody PaginationDTO paginationDTO) {
-        return ResponseEntity.ok().body(capsuleService.getHistoryCapsuleBoxes(userId, paginationDTO));
+    public ResponseEntity<List<HistoryCapsuleBoxes>> getHistoryCapsuleBoxes(@Parameter(hidden = true) @AuthUser Long userId,
+                                                                            @RequestParam int page,
+                                                                            @RequestParam int size) {
+        return ResponseEntity.ok().body(capsuleService.getHistoryCapsuleBoxes(userId, page, size));
     }
 
     @DeleteMapping("/api/capsule-box/{capsuleBoxId}")
@@ -63,8 +66,11 @@ public class CapsuleController {
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
     }
     @GetMapping("/api/capsule-list/{capsuleBoxId}")
-    public ResponseEntity<List<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId, @RequestBody PaginationDTO paginationDTO) {
-        return ResponseEntity.ok().body(capsuleService.getCapsuleList(capsuleBoxId, paginationDTO));
+    public ResponseEntity<List<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId,
+                                                               @AuthUser Long userId,
+                                                               @RequestParam int page,
+                                                               @RequestParam int size) {
+        return ResponseEntity.ok().body(capsuleService.getCapsuleList(capsuleBoxId, userId, page, size));
     }
 
     @GetMapping("/api/capsule/{capsuleId}")
