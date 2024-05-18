@@ -164,7 +164,7 @@ public class CapsuleService {
             throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
         }
 
-        Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isAfter(LocalDateTime.now())).findFirst();
+        Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isBefore(LocalDateTime.now())).findFirst();
 
         if(!capsuleBox.isPresent()){
             throw new CapsuleException(CapsuleErrorCode.ACTIVE_CAPSULE_BOX_NOT_FOUND);
