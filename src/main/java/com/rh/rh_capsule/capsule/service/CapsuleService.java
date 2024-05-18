@@ -176,7 +176,7 @@ public class CapsuleService {
     public List<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<CapsuleBox> capsuleBoxPage = capsuleBoxRepository.findByUserIdAndOpenedAtBefore(userId, LocalDateTime.now(), pageable);
+        Page<CapsuleBox> capsuleBoxPage = capsuleBoxRepository.findByUserIdAndOpenedAtAfter(userId, LocalDateTime.now(), pageable);
 
         return capsuleBoxPage.stream().map(capsuleBox -> new HistoryCapsuleBoxes(
                 capsuleBox.getId(),
