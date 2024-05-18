@@ -25,13 +25,13 @@ public class CapsuleController {
     private final CapsuleService capsuleService;
 
     @PostMapping("/api/capsule-box")
-    public ResponseEntity<?> createCapsuleBox(@RequestBody CapsuleBoxCreateDTO capsuleBoxCreateDTO, @AuthUser Long userId) {
+    public ResponseEntity<?> createCapsuleBox(@RequestBody CapsuleBoxCreateDTO capsuleBoxCreateDTO, @Parameter(hidden = true) @AuthUser Long userId) {
         capsuleService.createCapsuleBox(capsuleBoxCreateDTO, userId);
         return ResponseEntity.ok().body("캡슐함이 생성되었습니다.");
     }
 
     @GetMapping("/api/capsule-box")
-    public ResponseEntity<ActiveCapsuleBoxDto> getActiveCapsuleBox(@AuthUser Long userId) {
+    public ResponseEntity<ActiveCapsuleBoxDto> getActiveCapsuleBox(@Parameter(hidden = true) @AuthUser Long userId) {
         ActiveCapsuleBoxDto capsuleBoxList = capsuleService.getCapsuleBoxList(userId);
         return ResponseEntity.ok().body(capsuleBoxList);
     }
@@ -52,7 +52,7 @@ public class CapsuleController {
     public ResponseEntity<?> createCapsule(@RequestPart(value = "capsule") @Schema(implementation = CapsuleCreateDTO.class) CapsuleCreateDTO capsuleCreateDTO,
                                            @RequestPart(value = "image", required = false) MultipartFile image,
                                            @RequestPart(value = "audio", required = false) MultipartFile audio,
-                                           @AuthUser Long id) {
+                                           @Parameter(hidden = true) @AuthUser Long id) {
 
         capsuleService.createCapsuleProcess(capsuleCreateDTO, image, audio, UserType.USER, id);
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
@@ -67,7 +67,7 @@ public class CapsuleController {
     }
     @GetMapping("/api/capsule-list/{capsuleBoxId}")
     public ResponseEntity<List<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId,
-                                                               @AuthUser Long userId,
+                                                               @Parameter(hidden = true) @AuthUser Long userId,
                                                                @RequestParam int page,
                                                                @RequestParam int size) {
         return ResponseEntity.ok().body(capsuleService.getCapsuleList(capsuleBoxId, userId, page, size));
