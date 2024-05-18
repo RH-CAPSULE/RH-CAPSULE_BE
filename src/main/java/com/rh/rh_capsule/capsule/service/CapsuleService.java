@@ -186,8 +186,8 @@ public class CapsuleService {
                 capsuleBox.getCreatedAt()
         )).toList();
 
-        Integer prev = capsuleBoxPage.hasPrevious() ? capsuleBoxPage.previousPageable().getPageNumber() : -1;
-        Integer next = capsuleBoxPage.hasNext() ? capsuleBoxPage.nextPageable().getPageNumber() : -1;
+        Integer prev = capsuleBoxPage.hasPrevious() ? capsuleBoxPage.previousPageable().getPageNumber() : null;
+        Integer next = capsuleBoxPage.hasNext() ? capsuleBoxPage.nextPageable().getPageNumber() : null;
 
         return new PagedContent<>(historyCapsuleBoxes, prev, next);
     }
