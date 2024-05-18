@@ -164,7 +164,7 @@ public class CapsuleService {
             throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
         }
 
-        Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isBefore(LocalDateTime.now())).findFirst();
+        Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isAfter(LocalDateTime.now())).findFirst();
 
         if(!capsuleBox.isPresent()){
             throw new CapsuleException(CapsuleErrorCode.ACTIVE_CAPSULE_BOX_NOT_FOUND);
@@ -173,18 +173,23 @@ public class CapsuleService {
         return capsuleBox.get();
     }
 
-    public List<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, int page, int size) {
+    public PagedContent<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<CapsuleBox> capsuleBoxPage = capsuleBoxRepository.findByUserIdAndOpenedAtAfter(userId, LocalDateTime.now(), pageable);
+        Page<CapsuleBox> capsuleBoxPage = capsuleBoxRepository.findByUserIdAndOpenedAtBefore(userId, LocalDateTime.now(), pageable);
 
-        return capsuleBoxPage.stream().map(capsuleBox -> new HistoryCapsuleBoxes(
+        List<HistoryCapsuleBoxes> historyCapsuleBoxes = capsuleBoxPage.stream().map(capsuleBox -> new HistoryCapsuleBoxes(
                 capsuleBox.getId(),
                 capsuleBox.getTheme(),
                 capsuleBox.getOpenedAt(),
                 capsuleBox.getClosedAt(),
                 capsuleBox.getCreatedAt()
         )).toList();
+
+        Integer prev = capsuleBoxPage.hasPrevious() ? capsuleBoxPage.previousPageable().getPageNumber() : -1;
+        Integer next = capsuleBoxPage.hasNext() ? capsuleBoxPage.nextPageable().getPageNumber() : -1;
+
+        return new PagedContent<>(historyCapsuleBoxes, prev, next);
     }
 
     public void deleteCapsuleBox(Long capsuleBoxId) {
@@ -201,7 +206,7 @@ public class CapsuleService {
         }
     }
 
-    public List<CapsuleListDTO> getCapsuleList(Long capsuleBoxId, Long userId, int page, int size) {
+    public PagedContent<CapsuleListDTO> getCapsuleList(Long capsuleBoxId, Long userId, int page, int size) {
         CapsuleBox capsuleBox = capsuleBoxRepository.findById(capsuleBoxId)
                 .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
 
@@ -217,13 +222,19 @@ public class CapsuleService {
 
         Page<Capsule> capsulePage = capsuleRepository.findByCapsuleBoxId(capsuleBoxId, pageable);
 
-        return capsulePage.stream().map(capsule -> new CapsuleListDTO(
+        List<CapsuleListDTO> capsuleList = capsulePage.stream().map(capsule -> new CapsuleListDTO(
                 capsule.getId(),
                 capsule.getColor(),
                 capsule.getTitle(),
+                capsule.getWriter(),
                 capsule.getIsMine(),
                 capsule.getCreatedAt()
         )).toList();
+
+        Integer prev = capsulePage.hasPrevious() ? capsulePage.previousPageable().getPageNumber() : null;
+        Integer next = capsulePage.hasNext() ? capsulePage.nextPageable().getPageNumber() : null;
+
+        return new PagedContent<>(capsuleList, prev, next);
     }
 
     public CapsuleDTO getCapsule(Long capsuleId) {
