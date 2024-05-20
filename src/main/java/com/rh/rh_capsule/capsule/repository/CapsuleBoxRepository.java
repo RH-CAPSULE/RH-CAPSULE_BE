@@ -14,9 +14,7 @@ import java.util.Optional;
 public interface CapsuleBoxRepository extends JpaRepository<CapsuleBox, Long> {
     List<CapsuleBox> findByUserId(Long userId);
     Optional<CapsuleBox> findById(Long id);
-
-    @Query("SELECT c FROM CapsuleBox c WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
-    Optional<CapsuleBox> findTopByUserIdOrderByCreatedAtDesc(@Param("userId") Long userId);
+    Optional<CapsuleBox> findFirstByUserIdOrderByCreatedAtDesc(Long userId);
     //페이지 네이션
     Page<CapsuleBox> findByUserIdAndOpenedAtBefore(Long userId, LocalDateTime openedAt, Pageable pageable);
 
