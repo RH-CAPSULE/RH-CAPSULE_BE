@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record CapsuleDTO(
         Long capsuleId,
         String color,
+        String theme,
         String title,
         String content,
         String writer,
