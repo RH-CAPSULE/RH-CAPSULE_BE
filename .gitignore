@@ -287,4 +287,8 @@ gradle-app.setting
 
 src/test/
 
+src/main/resources
+
 .DS_Store
+
+Dockerfile
