@@ -130,17 +130,21 @@ public class CapsuleService {
         }
     }
 
-    public ActiveCapsuleBoxDto getCapsuleBoxList(Long userId) {
+    public ActiveCapsuleBoxDTO getCapsuleBoxList(Long userId) {
         CapsuleBox activeCapsuleBox = findActiveCapsuleBox(userId);
 
         List<Capsule> capsules = activeCapsuleBox.getCapsules();
         List<String> capsuleColors = capsules.stream().map(capsule -> capsule.getColor()).toList();
 
-        return new ActiveCapsuleBoxDto(
+        boolean hasMine = capsules.stream()
+                .anyMatch(Capsule::getIsMine);
+
+        return new ActiveCapsuleBoxDTO(
                 activeCapsuleBox.getId(),
                 activeCapsuleBox.getTheme(),
                 activeCapsuleBox.getOpenedAt(),
                 activeCapsuleBox.getClosedAt(),
+                hasMine,
                 capsuleColors
         );
     }
