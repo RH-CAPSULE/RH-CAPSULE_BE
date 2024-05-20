@@ -5,11 +5,12 @@ import com.rh.rh_capsule.capsule.domain.CapsuleBoxTheme;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ActiveCapsuleBoxDto(
+public record ActiveCapsuleBoxDTO(
         Long capsuleBoxId,
         CapsuleBoxTheme theme,
         LocalDateTime openedAt,
         LocalDateTime closedAt,
+        Boolean hasMyCapsule,
         List<String> capsules
 ) {
 }
