@@ -27,8 +27,8 @@ public class CapsuleController {
     }
 
     @GetMapping("/api/capsule-box")
-    public ResponseEntity<ActiveCapsuleBoxDto> getActiveCapsuleBox(@Parameter(hidden = true) @AuthUser Long userId) {
-        ActiveCapsuleBoxDto capsuleBoxList = capsuleService.getCapsuleBoxList(userId);
+    public ResponseEntity<ActiveCapsuleBoxDTO> getActiveCapsuleBox(@Parameter(hidden = true) @AuthUser Long userId) {
+        ActiveCapsuleBoxDTO capsuleBoxList = capsuleService.getCapsuleBoxList(userId);
         return ResponseEntity.ok().body(capsuleBoxList);
     }
 
