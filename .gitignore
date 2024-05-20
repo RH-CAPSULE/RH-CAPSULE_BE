@@ -285,8 +285,6 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/intellij,intellij+all,intellij+iml,gradle,java
 *.yml
 
-src/test/
-
 src/main/resources
 
 .DS_Store
