@@ -70,7 +70,8 @@ public class CapsuleController {
     }
 
     @GetMapping("/api/capsule/{capsuleId}")
-    public ResponseEntity<CapsuleDTO> getCapsule(@PathVariable Long capsuleId) {
-        return ResponseEntity.ok().body(capsuleService.getCapsule(capsuleId));
+    public ResponseEntity<CapsuleDTO> getCapsule(@PathVariable Long capsuleId,
+                                                 @Parameter(hidden = true) @AuthUser Long userId){
+        return ResponseEntity.ok().body(capsuleService.getCapsuleDetail(capsuleId, userId));
     }
 }
