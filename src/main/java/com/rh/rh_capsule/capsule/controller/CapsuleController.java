@@ -62,7 +62,7 @@ public class CapsuleController {
         return ResponseEntity.ok().body("캡슐이 생성되었습니다.");
     }
     @GetMapping("/api/capsule-list/{capsuleBoxId}")
-    public ResponseEntity<PagedContent> getCapsuleList(@PathVariable Long capsuleBoxId,
+    public ResponseEntity<PagedContent<CapsuleListDTO>> getCapsuleList(@PathVariable Long capsuleBoxId,
                                                        @Parameter(hidden = true) @AuthUser Long userId,
                                                        @RequestParam int page,
                                                        @RequestParam int size) {
