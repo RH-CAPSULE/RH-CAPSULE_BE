@@ -182,7 +182,11 @@ public class CapsuleService {
                 capsuleBox.getTheme(),
                 capsuleBox.getOpenedAt(),
                 capsuleBox.getClosedAt(),
-                capsuleBox.getCreatedAt()
+                capsuleBox.getCreatedAt(),
+                capsuleBox.getCapsules().stream()
+                        .map(Capsule::getColor)
+                        .limit(20)
+                        .toList()
         )).toList();
 
         Integer prev = capsuleBoxPage.hasPrevious() ? capsuleBoxPage.previousPageable().getPageNumber() : null;
