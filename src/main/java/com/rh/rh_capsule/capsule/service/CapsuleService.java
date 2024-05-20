@@ -156,7 +156,7 @@ public class CapsuleService {
     }
 
     public CapsuleBox findRecentCapsuleBox(Long userId){
-        return capsuleBoxRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+        return capsuleBoxRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
                 .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
     }
 
@@ -205,7 +205,6 @@ public class CapsuleService {
         try{
             capsuleBoxRepository.delete(capsuleBox.get());
         }catch (Exception e){
-            log.info(e.getMessage());
             throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_DELETE_FAILED);
         }
     }
