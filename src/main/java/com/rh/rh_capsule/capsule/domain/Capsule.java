@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@EntityListeners(CapsuleEntityListener.class)
 public class Capsule {
 
     @Id @GeneratedValue
