@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -130,23 +131,32 @@ public class CapsuleService {
         }
     }
 
-    public ActiveCapsuleBoxDTO getCapsuleBoxList(Long userId) {
-        CapsuleBox activeCapsuleBox = findActiveCapsuleBox(userId);
+    public ActiveCapsuleBoxDTO getRecentCapsuleBox(Long userId) {
+        CapsuleBox recentCapsuleBox = findRecentCapsuleBox(userId);
 
-        List<Capsule> capsules = activeCapsuleBox.getCapsules();
-        List<String> capsuleColors = capsules.stream().map(capsule -> capsule.getColor()).toList();
+        List<Capsule> capsules = recentCapsuleBox.getCapsules().stream()
+                .limit(20)
+                .collect(Collectors.toList());
+        List<String> capsuleColors = capsules.stream()
+                .map(Capsule::getColor)
+                .collect(Collectors.toList());
 
         boolean hasMine = capsules.stream()
                 .anyMatch(Capsule::getIsMine);
 
         return new ActiveCapsuleBoxDTO(
-                activeCapsuleBox.getId(),
-                activeCapsuleBox.getTheme(),
-                activeCapsuleBox.getOpenedAt(),
-                activeCapsuleBox.getClosedAt(),
+                recentCapsuleBox.getId(),
+                recentCapsuleBox.getTheme(),
+                recentCapsuleBox.getOpenedAt(),
+                recentCapsuleBox.getClosedAt(),
                 hasMine,
                 capsuleColors
         );
+    }
+
+    public CapsuleBox findRecentCapsuleBox(Long userId){
+        return capsuleBoxRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
+                .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
     }
 
     public Boolean hasActiveCapsuleBox(Long userId){
@@ -159,22 +169,6 @@ public class CapsuleService {
         Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isAfter(LocalDateTime.now())).findFirst();
 
         return capsuleBox.isPresent();
-    }
-
-    public CapsuleBox findActiveCapsuleBox(Long userId){
-        List<CapsuleBox> capsuleBoxes = capsuleBoxRepository.findByUserId(userId);
-
-        if(capsuleBoxes.isEmpty()){
-            throw new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND);
-        }
-
-        Optional<CapsuleBox> capsuleBox = capsuleBoxes.stream().filter(box -> box.getOpenedAt().isAfter(LocalDateTime.now())).findFirst();
-
-        if(!capsuleBox.isPresent()){
-            throw new CapsuleException(CapsuleErrorCode.ACTIVE_CAPSULE_BOX_NOT_FOUND);
-        }
-
-        return capsuleBox.get();
     }
 
     public PagedContent<HistoryCapsuleBoxes> getHistoryCapsuleBoxes(Long userId, int page, int size) {
