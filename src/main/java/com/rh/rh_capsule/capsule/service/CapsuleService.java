@@ -237,11 +237,15 @@ public class CapsuleService {
         return new PagedContent<>(capsuleList, prev, next);
     }
 
-    public CapsuleDTO getCapsule(Long capsuleId) {
+    public CapsuleDTO getCapsuleDetail(Long capsuleId, Long userId) {
         Optional<Capsule> capsule = capsuleRepository.findById(capsuleId);
 
         if(!capsule.isPresent()){
             throw new CapsuleException(CapsuleErrorCode.CAPSULE_NOT_FOUND);
+        }
+
+        if(capsule.get().getCapsuleBox().getUser().getId() != userId){
+            throw new CapsuleException(CapsuleErrorCode.INVALID_CAPSULE_BOX_USER);
         }
 
         return new CapsuleDTO(
