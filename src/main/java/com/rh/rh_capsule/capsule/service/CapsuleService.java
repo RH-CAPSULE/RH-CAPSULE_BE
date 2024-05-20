@@ -94,6 +94,7 @@ public class CapsuleService {
         Capsule newCapsule = Capsule.builder()
                 .capsuleBox(capsuleBox)
                 .color(capsuleCreateDTO.color())
+                .theme(capsuleCreateDTO.theme())
                 .title(capsuleCreateDTO.title())
                 .content(capsuleCreateDTO.content())
                 .writer(capsuleCreateDTO.writer())
@@ -223,6 +224,7 @@ public class CapsuleService {
         List<CapsuleListDTO> capsuleList = capsulePage.stream().map(capsule -> new CapsuleListDTO(
                 capsule.getId(),
                 capsule.getColor(),
+                capsule.getTheme(),
                 capsule.getTitle(),
                 capsule.getWriter(),
                 capsule.getIsMine(),
@@ -245,6 +247,7 @@ public class CapsuleService {
         return new CapsuleDTO(
                 capsule.get().getId(),
                 capsule.get().getColor(),
+                capsule.get().getTheme(),
                 capsule.get().getTitle(),
                 capsule.get().getContent(),
                 capsule.get().getWriter(),
