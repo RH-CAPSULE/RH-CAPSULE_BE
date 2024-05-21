@@ -21,8 +21,8 @@ public class Capsule {
 
     @Column(nullable = false)
     private String color;
-    @Column(nullable = false)
-    private String theme;
+    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    private CapsuleTheme theme;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class Capsule {
     private Boolean isMine;
 
     @Builder
-    public Capsule(CapsuleBox capsuleBox, String color, String theme, String title, String content, String writer, String imageUrl, String audioUrl, LocalDateTime createdAt, Boolean isMine) {
+    public Capsule(CapsuleBox capsuleBox, String color, CapsuleTheme theme, String title, String content, String writer, String imageUrl, String audioUrl, LocalDateTime createdAt, Boolean isMine) {
         this.capsuleBox = capsuleBox;
         this.color = color;
         this.theme = theme;
