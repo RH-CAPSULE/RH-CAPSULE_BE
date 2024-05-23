@@ -1,6 +1,7 @@
 package com.rh.rh_capsule.auth.service;
 
 import com.rh.rh_capsule.auth.controller.dto.*;
+import com.rh.rh_capsule.auth.domain.UserStatus;
 import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
@@ -50,15 +51,15 @@ public class AuthService {
 //        }
 //        redisDao.deleteVerification(userEmail);
 
-        //이메인 인증 구현
-        User data = new User();
+        User user = User.builder()
+                .userEmail(userEmail)
+                .password(bCryptPasswordEncoder.encode(password))
+                .userName(name)
+                .authority(UserAuthority.NORMAL_USER)
+                .status(UserStatus.ACTIVE)
+                .build();
 
-        data.setUserEmail(userEmail);
-        data.setPassword(bCryptPasswordEncoder.encode(password));
-        data.setUserName(name);
-        data.setAuthority(UserAuthority.NORMAL_USER);
-
-        userRepository.save(data);
+        userRepository.save(user);
     }
 
     public TokenResponse signIn(UserDTO userDTO) {
@@ -68,6 +69,9 @@ public class AuthService {
 
         Optional<User> user = Optional.ofNullable(userRepository.findByUserEmail(userEmail));
 
+        if(user.get().getStatus().equals(UserStatus.DELETED)){
+            throw new AuthException(AuthErrorCode.DELETED_USER);
+        }
         if (user.isPresent() && bCryptPasswordEncoder.matches(password, user.get().getPassword())) {
             return jwtProvider.createTokens(user.get().getId());
         }

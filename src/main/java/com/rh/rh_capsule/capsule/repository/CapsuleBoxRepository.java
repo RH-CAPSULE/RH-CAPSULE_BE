@@ -18,4 +18,5 @@ public interface CapsuleBoxRepository extends JpaRepository<CapsuleBox, Long> {
     //페이지 네이션
     Page<CapsuleBox> findByUserIdAndOpenedAtBefore(Long userId, LocalDateTime openedAt, Pageable pageable);
 
+    void deleteByUserId(Long userId);
 }

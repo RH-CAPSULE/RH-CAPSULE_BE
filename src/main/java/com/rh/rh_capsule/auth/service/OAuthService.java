@@ -1,15 +1,13 @@
 package com.rh.rh_capsule.auth.service;
 
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
-import com.rh.rh_capsule.auth.domain.OAuthUser;
-import com.rh.rh_capsule.auth.domain.Provider;
-import com.rh.rh_capsule.auth.domain.User;
-import com.rh.rh_capsule.auth.domain.UserAuthority;
+import com.rh.rh_capsule.auth.domain.*;
+import com.rh.rh_capsule.auth.exception.AuthErrorCode;
+import com.rh.rh_capsule.auth.exception.AuthException;
 import com.rh.rh_capsule.auth.infrastructure.RestTemplateOAuthRequester;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,14 +27,19 @@ public class OAuthService {
         String userEmail = oAuthUser.userEmail();
         if(userRepository.existsByUserEmail(userEmail)){
             User user = userRepository.findByUserEmail(userEmail);
+            if(user.getStatus().equals(UserStatus.DELETED)){
+                throw new AuthException(AuthErrorCode.DELETED_USER);
+            }
             return jwtProvider.createTokens(user.getId());
         }
-        User newUser = new User();
-        newUser.setUserEmail(userEmail);
-        newUser.setPassword(OAUTH_PASSWORD);
-        newUser.setUserName(oAuthUser.username());
-        newUser.setAuthority(UserAuthority.NORMAL_USER);
-        userRepository.save(newUser);
-        return jwtProvider.createTokens(newUser.getId());
+        User user = User.builder()
+                .userEmail(userEmail)
+                .userName(oAuthUser.userName())
+                .password(OAUTH_PASSWORD)
+                .authority(UserAuthority.NORMAL_USER)
+                .status(UserStatus.ACTIVE)
+                .build();
+        userRepository.save(user);
+        return jwtProvider.createTokens(user.getId());
     }
 }

@@ -26,7 +26,7 @@ public enum AuthErrorCode implements ErrorCode {
     OAUTH_UNEXPECTED_ERROR(400, 2000, "OAuth 요청 중 예기치 않은 오류가 발생했습니다."),
     HTTP_REQUEST_FAILED(400, 2001, "HTTP 요청이 실패했습니다."),
     SERVICE_UNAVAILABLE(503,2002, "서비스를 이용할 수 없습니다."),
-    ;
+    DELETED_USER(403, 1019, "탈퇴한 사용자입니다."),;
 
     private final int statusCode;
     private final int exceptionCode;
