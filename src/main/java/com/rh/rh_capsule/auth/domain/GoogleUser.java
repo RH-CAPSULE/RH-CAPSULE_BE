@@ -5,12 +5,12 @@ import java.util.Map;
 public class GoogleUser implements OAuthUser{
 
     private final String id;
-    private final String username;
+    private final String userName;
     private final String userEmail;
 
     public GoogleUser(Map<String, Object> attributes) {
         this.id = (String) attributes.get("id");
-        this.username = (String) attributes.get("name");
+        this.userName = (String) attributes.get("name");
         this.userEmail = (String) attributes.get("email");
     }
 
@@ -20,8 +20,8 @@ public class GoogleUser implements OAuthUser{
     }
 
     @Override
-    public String username() {
-        return username;
+    public String userName() {
+        return userName;
     }
 
     @Override
