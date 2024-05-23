@@ -47,7 +47,8 @@ public class AuthConfig implements WebMvcConfigurer {
         return new SelectiveApiInterceptor(tokenBlackListInterceptor)
                 .addExcludePattern("/**", OPTIONS)
 
-                .addIncludePattern("/api/auth/user", GET)
+                .addIncludePattern("/api/user", GET)
+                .addIncludePattern("/api/user/resign", DELETE)
                 .addIncludePattern("/api/auth/sign-out", DELETE)
                 .addIncludePattern("/api/capsule-box", GET)
                 .addIncludePattern("/api/capsule-box", POST)
@@ -67,7 +68,8 @@ public class AuthConfig implements WebMvcConfigurer {
         return new SelectiveApiInterceptor(signInInterceptor)
                 .addExcludePattern("/**", OPTIONS)
 
-                .addIncludePattern("/api/auth/user", GET)
+                .addIncludePattern("/api/user", GET)
+                .addIncludePattern("/api/user/resign", DELETE)
                 .addIncludePattern("/api/auth/sign-out", DELETE)
                 .addIncludePattern("/api/capsule-box", GET)
                 .addIncludePattern("/api/capsule-box", POST)
