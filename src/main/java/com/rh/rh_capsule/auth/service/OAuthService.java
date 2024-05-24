@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.service;
 
+import com.rh.rh_capsule.auth.controller.dto.OAuthSignInResponse;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.domain.*;
 import com.rh.rh_capsule.auth.exception.AuthErrorCode;
@@ -23,14 +24,15 @@ public class OAuthService {
         return restTemplateOAuthRequester.signInUri(Provider.from(provider), redirectUri);
     }
 
-    public TokenResponse signIn(OAuthUser oAuthUser) {
+    public OAuthSignInResponse signIn(OAuthUser oAuthUser) {
         String userEmail = oAuthUser.userEmail();
         if(userRepository.existsByUserEmail(userEmail)){
             User user = userRepository.findByUserEmail(userEmail);
             if(user.getStatus().equals(UserStatus.DELETED)){
                 throw new AuthException(AuthErrorCode.DELETED_USER);
             }
-            return jwtProvider.createTokens(user.getId());
+            TokenResponse tokens = jwtProvider.createTokens(user.getId());
+            return new OAuthSignInResponse(tokens.accessToken(), tokens.refreshToken(), false);
         }
         User user = User.builder()
                 .userEmail(userEmail)
@@ -40,6 +42,7 @@ public class OAuthService {
                 .status(UserStatus.ACTIVE)
                 .build();
         userRepository.save(user);
-        return jwtProvider.createTokens(user.getId());
+        TokenResponse tokens = jwtProvider.createTokens(user.getId());
+        return new OAuthSignInResponse(tokens.accessToken(), tokens.refreshToken(), true);
     }
 }
