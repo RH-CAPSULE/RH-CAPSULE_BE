@@ -7,8 +7,10 @@ import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.jwt.JwtProvider;
 import com.rh.rh_capsule.auth.domain.User;
 import com.rh.rh_capsule.auth.domain.UserAuthority;
+import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
 import com.rh.rh_capsule.redis.RedisDao;
 import com.rh.rh_capsule.auth.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,10 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RedisDao redisDao;
 
-    public void signOut(Long userId, String accessToken) {
+    public void signOut(Long userId, HttpServletRequest request) {
+        String accessToken = AuthenticationExtractor.extractAccessToken(request)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.UNAUTHORIZED));
+
         redisDao.deleteRefreshToken(userId.toString());
         redisDao.setAccessTokenSignOut(accessToken);
     }

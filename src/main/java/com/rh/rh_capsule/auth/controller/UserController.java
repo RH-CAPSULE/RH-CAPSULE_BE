@@ -6,6 +6,7 @@ import com.rh.rh_capsule.auth.service.AuthService;
 import com.rh.rh_capsule.auth.service.UserService;
 import com.rh.rh_capsule.auth.support.AuthUser;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +24,8 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUser(userId));
     }
     @DeleteMapping("/api/user/resign")
-    public ResponseEntity<?> resign(@Parameter(hidden = true) @AuthUser Long userId) {
+    public ResponseEntity<?> resign(@Parameter(hidden = true) @AuthUser Long userId, HttpServletRequest request) {
+        authService.signOut(userId, request);
         userService.resign(userId);
         return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
     }
