@@ -1,5 +1,6 @@
 package com.rh.rh_capsule.auth.controller;
 
+import com.rh.rh_capsule.auth.controller.dto.OAuthSignInResponse;
 import com.rh.rh_capsule.auth.controller.dto.SignInUriResponse;
 import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.domain.OAuthUser;
@@ -29,10 +30,9 @@ public class OAuthController {
     }
 
     @PostMapping("/oauth/{provider}/sign-in")
-    public ResponseEntity signIn(@RequestBody OAuthSignInRequest request, @PathVariable String provider){
+    public ResponseEntity<OAuthSignInResponse> signIn(@RequestBody OAuthSignInRequest request, @PathVariable String provider){
         OAuthUser oAuthUser = restTemplateOAuthRequester.signIn(request, provider);
-        TokenResponse tokens = oAuthService.signIn(oAuthUser);
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(oAuthService.signIn(oAuthUser));
 
     }
 }
