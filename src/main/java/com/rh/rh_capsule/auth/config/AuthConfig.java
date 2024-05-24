@@ -48,6 +48,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addExcludePattern("/**", OPTIONS)
 
                 .addIncludePattern("/api/user", GET)
+                .addIncludePattern("/api/user", PATCH)
                 .addIncludePattern("/api/user/resign", DELETE)
                 .addIncludePattern("/api/auth/sign-out", DELETE)
                 .addIncludePattern("/api/capsule-box", GET)
@@ -69,6 +70,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addExcludePattern("/**", OPTIONS)
 
                 .addIncludePattern("/api/user", GET)
+                .addIncludePattern("/api/user", PATCH)
                 .addIncludePattern("/api/user/resign", DELETE)
                 .addIncludePattern("/api/auth/sign-out", DELETE)
                 .addIncludePattern("/api/capsule-box", GET)

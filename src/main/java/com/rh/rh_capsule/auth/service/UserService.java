@@ -1,6 +1,7 @@
 package com.rh.rh_capsule.auth.service;
 
 import com.rh.rh_capsule.auth.controller.dto.UserDetailDTO;
+import com.rh.rh_capsule.auth.controller.dto.UserUpdate;
 import com.rh.rh_capsule.auth.domain.User;
 import com.rh.rh_capsule.auth.domain.UserAuthority;
 import com.rh.rh_capsule.auth.domain.UserStatus;
@@ -41,5 +42,13 @@ public class UserService {
         user.setUserEmail(anonymizedEmail);
         user.setPassword("Deleted User");
         user.setAuthority(UserAuthority.DELETED_USER);
+    }
+
+    @Transactional
+    public void updateUser(Long userId, UserUpdate userUpdate) {
+        User user = userRepository.findById(userId).
+                orElseThrow(() -> new AuthException(AuthErrorCode.USER_NOT_FOUND));
+
+        user.setUserName(userUpdate.userName());
     }
 }
