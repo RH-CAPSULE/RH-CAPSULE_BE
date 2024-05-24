@@ -2,14 +2,10 @@ package com.rh.rh_capsule.auth.controller;
 
 import com.rh.rh_capsule.auth.controller.dto.*;
 import com.rh.rh_capsule.auth.controller.dto.UserDTO;
-import com.rh.rh_capsule.auth.exception.AuthErrorCode;
 import com.rh.rh_capsule.auth.service.AuthService;
 import com.rh.rh_capsule.auth.support.AuthUser;
-import com.rh.rh_capsule.auth.support.AuthenticationExtractor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -56,9 +52,10 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "")
     })
     public ResponseEntity<?> signOut(@Parameter(hidden = true) @AuthUser Long userId, HttpServletRequest request) {
-        AuthenticationExtractor.extractAccessToken(request).ifPresent(accessToken -> authService.signOut(userId, accessToken));
+        authService.signOut(userId, request);
         return ResponseEntity.ok().body("로그이웃 되었습니다.");
     }
+
     @PostMapping("/api/auth/reset-pw")
     @Operation(summary = "비밀번호 재설정", description = "비밀번호를 재설정합니다, 이메일 인증을 먼저 진행해야합니다.",
     responses = {
