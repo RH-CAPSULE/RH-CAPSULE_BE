@@ -16,8 +16,7 @@ public class RedisDao {
     private final String SIGN_OUT_VALUE = "SIGN_OUT_VALUE";
 
     public void setRefreshToken(String userId, String refreshToken, long refreshTokenTime) {
-//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
-        redisTemplate.opsForValue().set(userId, refreshToken, refreshTokenTime, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(userId, refreshToken, refreshTokenTime, TimeUnit.SECONDS);
     }
 
     public String getRefreshToken(String userId){
@@ -30,7 +29,7 @@ public class RedisDao {
 
     public void setAccessTokenSignOut(String accessToken){
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
-        redisTemplate.opsForValue().set(accessToken, SIGN_OUT_VALUE, 1L, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(accessToken, SIGN_OUT_VALUE, 2L, TimeUnit.DAYS);
     }
 
     public boolean isKeyOfAccessTokenInBlackList(String accessToken) {
