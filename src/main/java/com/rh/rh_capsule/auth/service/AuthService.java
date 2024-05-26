@@ -12,6 +12,7 @@ import com.rh.rh_capsule.redis.RedisDao;
 import com.rh.rh_capsule.auth.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -45,16 +47,16 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.INVALID_INPUT);
         }
 
-//        Boolean isExist = userRepository.existsByUserEmail(userEmail);
-//
-//        if (isExist) {
-//            throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
-//        }
-//
-//        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
-//            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
-//        }
-//        redisDao.deleteVerification(userEmail);
+        Boolean isExist = userRepository.existsByUserEmail(userEmail);
+
+        if (isExist) {
+            throw new AuthException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
+        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
+            throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
+        }
+        redisDao.deleteVerification(userEmail);
 
         User user = User.builder()
                 .userEmail(userEmail)
@@ -102,11 +104,17 @@ public class AuthService {
     }
 
     public ReissueTokenResponse reissueToken(Long userId, TokenReissueDTO tokenReissueDTO) {
-        if(!jwtProvider.isRefreshTokenExpired(tokenReissueDTO.refreshToken())){
-            String refreshToken = redisDao.getRefreshToken(userId.toString());
-            if(!refreshToken.equals(tokenReissueDTO.refreshToken())){
-                throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
-            }
+        if(tokenReissueDTO.refreshToken() == null){
+            throw new AuthException(AuthErrorCode.EMPTY_REFRESH_TOKEN);
+        }
+        if(jwtProvider.isRefreshTokenExpired(tokenReissueDTO.refreshToken())){
+            throw new AuthException(AuthErrorCode.EXPIRED_REFRESH_TOKEN);
+        }
+
+        String refreshToken = redisDao.getRefreshToken(userId.toString());
+
+        if(!refreshToken.equals(tokenReissueDTO.refreshToken())){
+            throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
         }
         return jwtProvider.reissueTokens(userId);
     }
