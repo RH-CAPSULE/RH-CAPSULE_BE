@@ -30,10 +30,11 @@ public class JwtProvider {
 
     private final RedisDao redisDao;
 
-    private static final Long ONE_DAY = 60 * 60 * 24L;
     private static final Long ONE_HOUR = 60 * 60L;
+    private static final Long ONE_DAY = 60 * 60 * 24L;
+    private static final Long ONE_MONTH = 60 * 60 * 24 * 30L;
     private static final Long ACCESS_TOKEN_EXPIRATION_TIME = ONE_HOUR * 1L;
-    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = ONE_DAY * 7L;
+    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = ONE_MONTH * 6L;
 
     @PostConstruct
     public void init() {
@@ -56,13 +57,14 @@ public class JwtProvider {
     private String createAccessToken(Long id) {
         Claims claims = Jwts.claims();
         claims.put("id", id);
+        claims.put("type", "access");
         return accessToken(claims);
     }
 
     private String createRefreshToken(Long id) {
         Claims claims = Jwts.claims();
         claims.put("id", id);
-
+        claims.put("type", "refresh");
         String refreshToken = refreshToken(claims);
         redisDao.setRefreshToken(String.valueOf(id), refreshToken, REFRESH_TOKEN_EXPIRATION_TIME);
         return refreshToken;
@@ -107,6 +109,10 @@ public class JwtProvider {
                     .setSigningKey(secret.getBytes())
                     .parseClaimsJws(refreshToken)
                     .getBody();
+            String type = claims.get("type", String.class);
+            if (!type.equals("refresh")) {
+                throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
+            }
             return claims.getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
             return true;
@@ -131,6 +137,10 @@ public class JwtProvider {
                     .setSigningKey(secret.getBytes())
                     .parseClaimsJws(token)
                     .getBody();
+            String type = claims.get("type", String.class);
+            if (!type.equals("access")) {
+                throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
+            }
             return claims.get("id", Long.class);
         } catch (ExpiredJwtException e) {
             throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
@@ -157,6 +167,10 @@ public class JwtProvider {
                     .setSigningKey(secret.getBytes())
                     .parseClaimsJws(token)
                     .getBody();
+            String type = claims.get("type", String.class);
+            if (!type.equals("access")) {
+                throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
+            }
             return claims.get("id", Long.class);
         } catch (ExpiredJwtException e) {
             Claims expiredClaims = e.getClaims(); //catch 후 id 반환하고 이를 사용해 엑세스 토큰을 추출할 수 있음
