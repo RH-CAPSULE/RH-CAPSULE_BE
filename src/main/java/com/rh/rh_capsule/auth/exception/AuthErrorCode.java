@@ -28,7 +28,8 @@ public enum AuthErrorCode implements ErrorCode {
     SERVICE_UNAVAILABLE(503,2002, "서비스를 이용할 수 없습니다."),
     DELETED_USER(403, 1019, "탈퇴한 사용자입니다."),
     EMPTY_REFRESH_TOKEN(400, 1020, "리프레시 토큰이 없습니다."),
-    EXPIRED_REFRESH_TOKEN(401, 1021, "리프레시 토큰이 만료되었습니다."),;
+    EXPIRED_REFRESH_TOKEN(401, 1021, "리프레시 토큰이 만료되었습니다."),
+    REFRESH_TOKEN_NOT_FOUND(404, 1022, "리프레시 토큰을 찾을 수 없습니다.");
 
     private final int statusCode;
     private final int exceptionCode;
