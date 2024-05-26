@@ -107,11 +107,16 @@ public class AuthService {
         if(tokenReissueDTO.refreshToken() == null){
             throw new AuthException(AuthErrorCode.EMPTY_REFRESH_TOKEN);
         }
+
         if(jwtProvider.isRefreshTokenExpired(tokenReissueDTO.refreshToken())){
             throw new AuthException(AuthErrorCode.EXPIRED_REFRESH_TOKEN);
         }
 
         String refreshToken = redisDao.getRefreshToken(userId.toString());
+
+        if (refreshToken == null) {
+            throw new AuthException(AuthErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
 
         if(!refreshToken.equals(tokenReissueDTO.refreshToken())){
             throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
