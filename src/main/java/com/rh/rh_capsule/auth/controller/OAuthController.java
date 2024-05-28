@@ -2,7 +2,6 @@ package com.rh.rh_capsule.auth.controller;
 
 import com.rh.rh_capsule.auth.controller.dto.OAuthSignInResponse;
 import com.rh.rh_capsule.auth.controller.dto.SignInUriResponse;
-import com.rh.rh_capsule.auth.controller.dto.TokenResponse;
 import com.rh.rh_capsule.auth.domain.OAuthUser;
 import com.rh.rh_capsule.auth.infrastructure.RestTemplateOAuthRequester;
 import com.rh.rh_capsule.auth.service.OAuthService;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
