@@ -26,7 +26,6 @@ public class AuthConfig implements WebMvcConfigurer {
 
     private final SignInInterceptor signInInterceptor;
     private final TokenBlackListInterceptor tokenBlackListInterceptor;
-    private final TokenReissueInterceptor tokenReissueInterceptor;
 
     private final AuthArgumentResolver authArgumentResolver;
 
@@ -37,9 +36,6 @@ public class AuthConfig implements WebMvcConfigurer {
                 .order(1);
         registry.addInterceptor(signInInterceptor())
                 .order(2);
-        registry.addInterceptor(tokenReissueInterceptor())
-                .order(3);
-
     }
 
 
@@ -61,7 +57,6 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/notice", GET)
                 .addIncludePattern("/api/inquiry", POST)
 
-                .addExcludePattern("/api/auth/token-reissue", POST)
                 ;
     }
 
@@ -83,15 +78,6 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addIncludePattern("/api/notice", GET)
                 .addIncludePattern("/api/inquiry", POST)
 
-                .addExcludePattern("/api/auth/token-reissue", POST)
-                ;
-    }
-
-    private HandlerInterceptor tokenReissueInterceptor() {
-        return new SelectiveApiInterceptor(tokenReissueInterceptor)
-                .addExcludePattern("/**", OPTIONS)
-
-                .addIncludePattern("/api/auth/token-reissue", POST)
                 ;
     }
 
