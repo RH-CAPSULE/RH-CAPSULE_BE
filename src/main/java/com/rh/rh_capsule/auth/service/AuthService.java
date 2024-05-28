@@ -90,7 +90,6 @@ public class AuthService {
         String userEmail = userDTO.userEmail();
         String password = userDTO.password();
 
-        //이 부분 널처리 해야함
         if(!(redisDao.getVerification(userEmail) == "Verified")){
             throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
         }
@@ -103,14 +102,12 @@ public class AuthService {
         redisDao.deleteRefreshToken(user.getId().toString());
     }
 
-    public ReissueTokenResponse reissueToken(Long userId, TokenReissueDTO tokenReissueDTO) {
+    public ReissueTokenResponse reissueToken(TokenReissueDTO tokenReissueDTO) {
         if(tokenReissueDTO.refreshToken() == null){
             throw new AuthException(AuthErrorCode.EMPTY_REFRESH_TOKEN);
         }
 
-        if(jwtProvider.isRefreshTokenExpired(tokenReissueDTO.refreshToken())){
-            throw new AuthException(AuthErrorCode.EXPIRED_REFRESH_TOKEN);
-        }
+        Long userId = jwtProvider.extractIdRefresh(tokenReissueDTO.refreshToken());
 
         String refreshToken = redisDao.getRefreshToken(userId.toString());
 

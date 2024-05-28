@@ -131,7 +131,7 @@ public class JwtProvider {
             throw new AuthException(AuthErrorCode.JWT_ERROR);
         }
     }
-    public Long extractId(String token) {
+    public Long extractIdAccess(String token) {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secret.getBytes())
@@ -160,21 +160,19 @@ public class JwtProvider {
         }
     }
 
-    //재발급시에만 사용
-    public Long extractIdIgnoringExpiration(String token) {
+    public Long extractIdRefresh(String token) {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secret.getBytes())
                     .parseClaimsJws(token)
                     .getBody();
             String type = claims.get("type", String.class);
-            if (!type.equals("access")) {
+            if (!type.equals("refresh")) {
                 throw new AuthException(AuthErrorCode.INVALID_TOKEN_TYPE);
             }
             return claims.get("id", Long.class);
         } catch (ExpiredJwtException e) {
-            Claims expiredClaims = e.getClaims(); //catch 후 id 반환하고 이를 사용해 엑세스 토큰을 추출할 수 있음
-            return expiredClaims.get("id", Long.class);
+            throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
         } catch (SecurityException e) {
             throw new AuthException(AuthErrorCode.SECURITY_ERROR);
         } catch (MalformedJwtException e) {
@@ -190,5 +188,4 @@ public class JwtProvider {
             throw new AuthException(AuthErrorCode.JWT_ERROR);
         }
     }
-
 }
