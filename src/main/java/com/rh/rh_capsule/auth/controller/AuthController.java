@@ -73,8 +73,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "토큰이 재발급되었습니다."),
             @ApiResponse(responseCode = "400", description = "리프레시 토큰이 올바르지 않습니다."),
     })
-    public ResponseEntity<ReissueTokenResponse> reissueToken(@RequestBody TokenReissueDTO tokenReissueDTO,
-                                                             @Parameter(hidden = true) @AuthUser Long userId) {
-        return ResponseEntity.ok(authService.reissueToken(userId, tokenReissueDTO));
+    public ResponseEntity<ReissueTokenResponse> reissueToken(@RequestBody TokenReissueDTO tokenReissueDTO) {
+        return ResponseEntity.ok(authService.reissueToken(tokenReissueDTO));
     }
 }
