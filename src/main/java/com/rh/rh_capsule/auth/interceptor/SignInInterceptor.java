@@ -22,7 +22,7 @@ public class SignInInterceptor implements HandlerInterceptor {
         String accessToken = AuthenticationExtractor.extractAccessToken(request)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.UNAUTHORIZED));
 
-        Long userId = jwtProvider.extractId(accessToken);
+        Long userId = jwtProvider.extractIdAccess(accessToken);
         authenticationContext.setAuthentication(userId);
 
         return true;
