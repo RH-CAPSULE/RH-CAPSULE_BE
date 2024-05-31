@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -74,18 +74,21 @@ public class AuthService {
         String userEmail = userDTO.userEmail();
         String password = userDTO.password();
 
-        Optional<User> user = Optional.ofNullable(userRepository.findByUserEmail(userEmail));
+        User user = userRepository.findByUserEmail(userEmail).
+                orElseThrow(() -> new AuthException(AuthErrorCode.INCORRECT_INPUT));
 
-        if(user.get().getStatus().equals(UserStatus.DELETED)){
+        if(user.getStatus().equals(UserStatus.DELETED)){
             throw new AuthException(AuthErrorCode.DELETED_USER);
         }
-        if (user.isPresent() && bCryptPasswordEncoder.matches(password, user.get().getPassword())) {
-            return jwtProvider.createTokens(user.get().getId());
+
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())){
+            throw new AuthException(AuthErrorCode.INCORRECT_INPUT);
         }
 
-        throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+        return jwtProvider.createTokens(user.getId());
     }
 
+    @Transactional
     public void resetPassword(UserDTO userDTO) {
         String userEmail = userDTO.userEmail();
         String password = userDTO.password();
@@ -95,9 +98,9 @@ public class AuthService {
         }
         redisDao.deleteVerification(userEmail);
 
-        User user = userRepository.findByUserEmail(userEmail);
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.EMAIL_NOT_FOUND));
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        userRepository.save(user);
 
         redisDao.deleteRefreshToken(user.getId().toString());
     }
