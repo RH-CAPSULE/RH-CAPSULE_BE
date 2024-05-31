@@ -27,7 +27,7 @@ public class OAuthService {
     public OAuthSignInResponse signIn(OAuthUser oAuthUser) {
         String userEmail = oAuthUser.userEmail();
         if(userRepository.existsByUserEmail(userEmail)){
-            User user = userRepository.findByUserEmail(userEmail);
+            User user = userRepository.findByUserEmail(userEmail).get();
             if(user.getStatus().equals(UserStatus.DELETED)){
                 throw new AuthException(AuthErrorCode.DELETED_USER);
             }
