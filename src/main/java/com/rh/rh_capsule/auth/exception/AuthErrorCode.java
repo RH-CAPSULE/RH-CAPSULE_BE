@@ -19,7 +19,7 @@ public enum AuthErrorCode implements ErrorCode {
     SECURITY_ERROR(401, 1012, "토큰 처리 중 보안 오류가 발생했습니다."),
     JWT_ERROR(401, 1013, "토큰 관련 오류가 발생했습니다."),
     INVALID_VERIFICATION(401, 1014, "이메일 인증이 완료되지 않았습니다."),
-    EMAIL_NOT_FOUND(404, 1015, "이메일이 존재하지 않습니다."),
+    EMAIL_NOT_FOUND(404, 1015, "존재하지 않는 이메일입니다."),
     USER_NOT_FOUND(404, 1016, "사용자를 찾을 수 없습니다."),
     INVALID_REFRESH_TOKEN(400, 1017, "리프레시 토큰이 유효하지 않습니다."),
     INVALID_INPUT(400, 1018, "입력값이 유효하지 않습니다."),
@@ -30,7 +30,8 @@ public enum AuthErrorCode implements ErrorCode {
     EMPTY_REFRESH_TOKEN(400, 1020, "리프레시 토큰이 없습니다."),
     EXPIRED_REFRESH_TOKEN(401, 1021, "리프레시 토큰이 만료되었습니다."),
     REFRESH_TOKEN_NOT_FOUND(404, 1022, "리프레시 토큰을 찾을 수 없습니다."),
-    INVALID_TOKEN_TYPE(400, 1023, "토큰의 타입이 유효하지 않습니다."),;
+    INVALID_TOKEN_TYPE(400, 1023, "토큰의 타입이 유효하지 않습니다."),
+    INCORRECT_INPUT(400, 1024, "회원정보가 올바르지 않습니다."),;
 
     private final int statusCode;
     private final int exceptionCode;
