@@ -118,9 +118,12 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.REFRESH_TOKEN_NOT_FOUND);
         }
 
+        refreshToken = refreshToken.replaceAll("^\"|\"$", "");
+
         if(!refreshToken.equals(tokenReissueDTO.refreshToken())){
             throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
         }
+
         return jwtProvider.reissueTokens(userId);
     }
 }

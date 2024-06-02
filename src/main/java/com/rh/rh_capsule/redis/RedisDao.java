@@ -16,6 +16,7 @@ public class RedisDao {
     private final String SIGN_OUT_VALUE = "SIGN_OUT_VALUE";
 
     public void setRefreshToken(String userId, String refreshToken, long refreshTokenTime) {
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         redisTemplate.opsForValue().set(userId, refreshToken, refreshTokenTime, TimeUnit.SECONDS);
     }
 
