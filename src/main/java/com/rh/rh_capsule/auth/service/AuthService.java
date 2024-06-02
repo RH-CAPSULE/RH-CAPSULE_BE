@@ -93,7 +93,7 @@ public class AuthService {
         String userEmail = userDTO.userEmail();
         String password = userDTO.password();
 
-        if(!(redisDao.getVerification(userEmail) == "Verified")){
+        if(!(redisDao.getVerification(userEmail).equals("Verified"))){
             throw new AuthException(AuthErrorCode.INVALID_VERIFICATION);
         }
         redisDao.deleteVerification(userEmail);
