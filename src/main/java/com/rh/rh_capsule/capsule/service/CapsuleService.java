@@ -267,7 +267,7 @@ public class CapsuleService {
         );
     }
 
-    public ActiveCapsuleBoxDTO getGuestCapsuleBox(Long capsuleBoxId) {
+    public GuestCapsuleBoxDTO getGuestCapsuleBox(Long capsuleBoxId) {
         CapsuleBox capsuleBox = capsuleBoxRepository.findById(capsuleBoxId)
                 .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
 
@@ -275,8 +275,9 @@ public class CapsuleService {
             throw new CapsuleException(CapsuleErrorCode.NOT_ACTIVE_CAPSULE_BOX);
         }
 
-        return new ActiveCapsuleBoxDTO(
+        return new GuestCapsuleBoxDTO(
                 capsuleBox.getId(),
+                capsuleBox.getUser().getUserName(),
                 capsuleBox.getTheme(),
                 capsuleBox.getOpenedAt(),
                 capsuleBox.getClosedAt(),
