@@ -74,4 +74,11 @@ public class CapsuleController {
                                                  @Parameter(hidden = true) @AuthUser Long userId){
         return ResponseEntity.ok().body(capsuleService.getCapsuleDetail(capsuleId, userId));
     }
+
+    @GetMapping("/api/guest/capsule-box/{capsuleBoxId}")
+    public ResponseEntity<ActiveCapsuleBoxDTO> getGuestCapsuleBox(@PathVariable Long capsuleBoxId) {
+        ActiveCapsuleBoxDTO capsuleBoxList = capsuleService.getGuestCapsuleBox(capsuleBoxId);
+        return ResponseEntity.ok().body(capsuleBoxList);
+    }
+
 }
