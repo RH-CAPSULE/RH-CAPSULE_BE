@@ -266,4 +266,24 @@ public class CapsuleService {
                 capsule.get().getCreatedAt()
         );
     }
+
+    public ActiveCapsuleBoxDTO getGuestCapsuleBox(Long capsuleBoxId) {
+        CapsuleBox capsuleBox = capsuleBoxRepository.findById(capsuleBoxId)
+                .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.CAPSULE_BOX_NOT_FOUND));
+
+        if(capsuleBox.getClosedAt().isBefore(LocalDateTime.now())){
+            throw new CapsuleException(CapsuleErrorCode.NOT_ACTIVE_CAPSULE_BOX);
+        }
+
+        return new ActiveCapsuleBoxDTO(
+                capsuleBox.getId(),
+                capsuleBox.getTheme(),
+                capsuleBox.getOpenedAt(),
+                capsuleBox.getClosedAt(),
+                false,
+                capsuleBox.getCapsules().stream()
+                        .map(Capsule::getColor)
+                        .collect(Collectors.toList())
+        );
+    }
 }
