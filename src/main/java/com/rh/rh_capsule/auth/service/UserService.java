@@ -23,7 +23,7 @@ public class UserService {
 
     public UserDetailDTO getUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             throw new AuthException(AuthErrorCode.USER_NOT_FOUND);
         }
         return new UserDetailDTO(user.get().getUserEmail(), user.get().getUserName());
@@ -50,5 +50,9 @@ public class UserService {
                 orElseThrow(() -> new AuthException(AuthErrorCode.USER_NOT_FOUND));
 
         user.setUserName(userUpdate.userName());
+
+        if (user.getStatus().equals(UserStatus.JOINED)) {
+            user.setStatus(UserStatus.ACTIVE);
+        }
     }
 }
