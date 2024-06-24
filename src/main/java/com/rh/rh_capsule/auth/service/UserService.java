@@ -46,6 +46,9 @@ public class UserService {
 
     @Transactional
     public void updateUser(Long userId, UserUpdate userUpdate) {
+        if(userUpdate.userName() == null) {
+            throw new AuthException(AuthErrorCode.INVALID_INPUT);
+        }
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new AuthException(AuthErrorCode.USER_NOT_FOUND));
 
