@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +27,7 @@ public class UserController {
         return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
     }
     @PatchMapping("/api/user")
-    public ResponseEntity<?> updateUser(@Parameter(hidden = true) @AuthUser Long userId, UserUpdate userUpdate) {
+    public ResponseEntity<?> updateUser(@Parameter(hidden = true) @AuthUser Long userId, @RequestBody UserUpdate userUpdate) {
         userService.updateUser(userId, userUpdate);
         return ResponseEntity.ok().body("회원 정보가 수정되었습니다.");
     }
