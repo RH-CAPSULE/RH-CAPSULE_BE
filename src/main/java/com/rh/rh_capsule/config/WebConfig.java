@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 // 특정 프론트엔드 도메인을 명시적으로 허용
                 .allowedOriginPatterns("https://moment-capsule.web.app") // 또는 허용할 여러 도메인 나열
                 // 허용할 HTTP 메서드 지정
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 // JWT 토큰이 포함된 헤더를 허용
                 .allowedHeaders("Authorization", "Content-Type")
                 // 자격 증명 허용
