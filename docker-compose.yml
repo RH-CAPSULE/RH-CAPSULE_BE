@@ -1,0 +1,35 @@
+version: '3'
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # 호스트의 포트 8080을 컨테이너의 8080 포트로 매핑
+    depends_on:
+      - redis
+      - postgres  # postgres 의존성 추가
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"  # 호스트의 포트 6379를 컨테이너의 포트 6379로 매핑
+    command: redis-server /data/redis.conf
+    volumes:
+      - redis-data:/data  # 호스트의 ./data 디렉토리를 컨테이너의 /data 디렉토리에 마운트
+    restart: always
+
+  postgres:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_USER: "postgres"  # PostgreSQL 사용자 이름
+      POSTGRES_PASSWORD: "capsule157"  # PostgreSQL 비밀번호
+      POSTGRES_DB: "capsule"  # PostgreSQL 기본 데이터베이스
+    ports:
+      - "5432:5432"  # 호스트의 포트 5432를 컨테이너의 5432 포트로 매핑
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  redis-data:
