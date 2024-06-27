@@ -288,5 +288,3 @@ application.yml
 src/main/resources
 
 .DS_Store
-
-Dockerfile
