@@ -4,15 +4,6 @@ services:
     image: dhxxn/rh_capsule:latest
     ports:
       - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/capsule
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: capsule157
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-      CLOUD_AWS_CREDENTIALS_ACCESS_KEY: AKIA3FLD2YDIBP4SAXWL
-      CLOUD_AWS_CREDENTIALS_SECRET_KEY: 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
-      CLOUD_AWS_REGION_STATIC: ap-northeast-2
     depends_on:
       - redis
       - postgres
