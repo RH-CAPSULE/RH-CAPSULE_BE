@@ -33,7 +33,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t dhxxn/rh_capsule .
+          docker build --no-cache -t dhxxn/rh_capsule .
           docker push dhxxn/rh_capsule 
 
   deploy:
