@@ -15,7 +15,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("API Title").version("1.0").description("API Description"))
+                .info(new Info().title("Capsule Swagger").version("1.0").description("API Description"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
