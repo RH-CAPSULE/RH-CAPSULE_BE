@@ -52,5 +52,6 @@ jobs:
             cd RH-CAPSULE_BE  # 실제 프로젝트 경로로 변경
             git pull origin main
             docker-compose down
+            docker-compose pull
             docker-compose up -d
           EOF
