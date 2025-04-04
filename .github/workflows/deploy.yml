@@ -52,6 +52,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}Enter passphrase
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 50252
           script: |
             mkdir -p ~/rh_capsule
             echo "${{ secrets.DOCKER_COMPOSE_YML }}" > ~/rh_capsule/docker-compose.yml
