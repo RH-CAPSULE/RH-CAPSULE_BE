@@ -37,13 +37,14 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build and push Docker image (for ARM64)
-          uses: docker/build-push-action@v5
-          with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: dhxxn/rh_capsule:latest
-            platforms: linux/arm64
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: dhxxn/rh_capsule:latest
+          platforms: linux/arm64
+          
   deploy:
     needs: build
     runs-on: ubuntu-latest
