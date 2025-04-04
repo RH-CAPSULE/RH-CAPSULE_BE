@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: dhxxn/rh_capsule:latest
           platforms: linux/arm64
-          
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -61,5 +61,6 @@ jobs:
             mkdir -p ~/rh_capsule
             echo "${{ secrets.DOCKER_COMPOSE_YML }}" > ~/rh_capsule/docker-compose.yml
             cd ~/rh_capsule
+            docker-compose down --volumes --remove-orphans
             docker-compose pull
             docker-compose up -d
