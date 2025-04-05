@@ -61,6 +61,6 @@ jobs:
             mkdir -p ~/rh_capsule
             echo "${{ secrets.DOCKER_COMPOSE_YML }}" > ~/rh_capsule/docker-compose.yml
             cd ~/rh_capsule
-            docker-compose down --volumes --remove-orphans
+            docker-compose down
             docker-compose pull
             docker-compose up -d
